@@ -1,2 +1,51 @@
-﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+﻿@* Use this file whenever a view requires validation by adding it to the Scripts section like this:
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        -- other <scripts> here --
+    }
+ *@
+
+@* Set JavaScript variables with the correct script paths *@
+<script type="text/javascript">
+    var jQueryPath = '@Url.Content("~/lib/jquery/dist/jquery.min.js")';
+    var jQueryValidatePath = '@Url.Content("~/lib/jquery-validation/dist/jquery.validate.min.js")';
+    var jQueryValidateUnobtrusivePath = '@Url.Content("~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js")';
+</script>
+
+<script type="text/javascript">
+    @* this little portion of the script is used by controllers doing validation and Bootstrap to highlight properties which are invalid  *@
+    window.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("input.input-validation-error").forEach(
+            (elem) => { elem.classList.add("is-invalid"); }
+        );
+    });
+
+    // Function to load a script dynamically, works in both Development and Production environments
+    // Checks to see if the script is already loaded, most likely from within _Layout.cshtml, by the current page
+    function loadScript(url, integrity, crossorigin) {
+        var script = document.createElement('script');
+        script.src = url;
+        if (integrity) {
+            script.integrity = integrity;
+        }
+        if (crossorigin) {
+            script.crossOrigin = crossorigin;
+        }
+        document.head.appendChild(script);
+    }
+
+    // Check and load jQuery if not already loaded
+    if (typeof jQuery === 'undefined') {
+        loadScript(jQueryPath);
+    }
+
+    // Check and load jQuery Validation if not already loaded
+    if (typeof jQuery === 'undefined' || typeof jQuery.validator === 'undefined') {
+        loadScript(jQueryValidatePath);
+    }
+
+    // Check and load jQuery Validation Unobtrusive if not already loaded
+    if (typeof jQuery === 'undefined' || typeof jQuery.validator === 'undefined' || typeof jQuery.validator.unobtrusive === 'undefined') {
+        loadScript(jQueryValidateUnobtrusivePath);
+    }
+</script>
