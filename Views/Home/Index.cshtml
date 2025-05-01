@@ -2,7 +2,28 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container d-flex flex-column align-items-center mt-4">
+    <h3>Welcome to BakingIt!  Select an Action:</h3>
+    
+    <a asp-controller="Ingredient" asp-action="ViewIngredients" class="card w-50 text-center text-decoration-none">
+        <div class="card-body">
+            <h5 class="card-title">Ingredients</h5>
+            <p class="card-text">Click here to add or update Ingredients</p>
+        </div>
+    </a>
+    
+
+    <a asp-controller="Recipe" asp-action="Index" class="card w-50 text-center text-decoration-none mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Recipe</h5>
+            <p class="card-text">Click here to add or update Recipes</p>
+        </div>
+    </a>
+
+    @* <a asp-controller="Ingredient" asp-action="Index" class="card w-50 text-center text-decoration-none mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Calculate</h5>
+            <p class="card-text">Click here to calculate all recipes.</p>
+        </div>
+    </a> *@
 </div>

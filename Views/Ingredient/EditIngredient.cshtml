@@ -1,0 +1,53 @@
+@model BakingIt.Models.Ingredient
+@{
+    ViewBag.Title = "Edit Ingredient";
+}
+ 
+<h1>@ViewBag.Title</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-10">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="IngredientId" value="@Model.IngredientId" readonly />
+                <div class="form-group col-sm-6">
+                    <label asp-for="IngredientName" class="control-label"></label>
+                    <input type="text" asp-for="IngredientName" class="form-control" maxlength="255" required placeholder="Example:  Flour"/>
+                    <span asp-validation-for="IngredientName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label asp-for="PurchaseQuantity" class="control-label"></label>
+                        <input type="number" step="0.01" min="0" asp-for="PurchaseQuantity" class="form-control" required placeholder="Example:  12"/>
+                        <span asp-validation-for="PurchaseQuantity" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label asp-for="PurchaseUnit" class="control-label"></label>
+                        <input type="text" asp-for="PurchaseUnit" class="form-control" maxlength="30" required placeholder="Example: lbs"/>
+                        <span asp-validation-for="PurchaseUnit" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label asp-for="PurchaseCost" class="control-label"></label>
+                        <input type="number" step="0.01" min="0" asp-for="PurchaseCost" class="form-control" required placeholder="Example:  7.99"/>
+                        <span asp-validation-for="PurchaseCost" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mt-3">
+                <a class="btn btn-outline-warning" asp-controller="Ingredient" asp-action="ViewIngredients">Discard Changes</a>
+                <input type="submit" value="Edit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

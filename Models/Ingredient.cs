@@ -23,7 +23,7 @@ namespace BakingIt.Models
         public required decimal PurchaseCost { get; set; }
 
         // Navigation properties
-        public ICollection<Conversion> Conversions { get; set; } = null!;
-        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = null!;
+        public ICollection<Conversion> Conversions { get; set; } = new List<Conversion>();
+        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
     }
 }

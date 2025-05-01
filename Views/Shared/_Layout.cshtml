@@ -11,10 +11,13 @@
     <!-- font awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <!-- DataTable plugin -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
     <!-- jquery plugin:  this MUST be the first js as almost all of the following scripts rely on it; 
             located in the header to ensure it is loaded before anything in the RenderBody section might need it
             written as shown here includes jQuery from CDN with a fallback to local -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
         if (typeof jQuery == 'undefined') {
             document.write('<script src="/lib/jquery/dist/jquery.min.js"><\/script>');
@@ -58,7 +61,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- data table plugin - can load anytime after jquery.js and before site.js -->
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <!-- site.js must be last -->
     <script src="~/js/site.js" asp-append-version="true"></script>

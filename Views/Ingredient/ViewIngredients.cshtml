@@ -1,0 +1,72 @@
+@model List<BakingIt.Models.Ingredient>
+
+<div class="row my-3">
+    <h3>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">
+            <i class="fa fa-arrow-left "></i>
+        </a>
+        Ingredients
+    </h3>
+</div>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Error"]
+    </div>
+}
+
+<div>
+    <a class="btn btn-primary mb-3" asp-controller="Ingredient" asp-action="CreateIngredient">Create New</a>
+</div>
+
+<table class="table table-striped" id="ingredientsTable">
+    <thead>
+        <tr>
+            <th>Ingredient Name</th>
+            <th>Purchased Quantity</th>
+            <th>Purchased Unit</th>
+            <th>Purchased Cost</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ingredient in Model)
+        {
+            <tr>
+                <td>@ingredient.IngredientName</td>
+                <td>@ingredient.PurchaseQuantity</td>
+                <td>@ingredient.PurchaseUnit</td>
+                <td>@ingredient.PurchaseCost</td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="Ingredient" asp-action="EditIngredient" asp-route-id="@ingredient.IngredientId">Edit</a>
+
+                    <a class="btn btn-danger" asp-controller="Ingredient" asp-action="DeleteIngredient" asp-route-id="@ingredient.IngredientId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        // DataTable Documentation found here: https://datatables.net/
+        $(document).ready(function () {
+            // Creates DataTable
+            $('#ingredientsTable').DataTable({
+                columns: [null, null,null, null, { orderable: false }],
+                order: [[0, 'asc']],
+                pageLength: 10,
+                searching: true,
+                language: {
+                    emptyTable: 'None found'
+                }
+            });
+        });
+    </script>
+}
