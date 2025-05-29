@@ -10,6 +10,6 @@ namespace BakingIt.Models
         [Display(Name = "Recipe Name")]
         public required string RecipeName { get; set; }
         public string? Instructions { get; set; }
-        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = null!;
+        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
     }
 }

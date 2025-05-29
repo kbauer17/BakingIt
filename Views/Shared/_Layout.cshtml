@@ -57,6 +57,12 @@
             &copy; @DateTime.Now.Year - BakingIt - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    <!-- jquery validation plugins - must be loaded after the one in the header and before all others listed here - the _ValidationScriptsPartial will load local only if these fail to load properly -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+
     <!-- bootstrap plugin - can load anytime after jquery.js and before site.js  -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 

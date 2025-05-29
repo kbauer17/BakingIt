@@ -14,10 +14,28 @@
 
 <script type="text/javascript">
     @* this little portion of the script is used by controllers doing validation and Bootstrap to highlight properties which are invalid  *@
-    window.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll("input.input-validation-error").forEach(
-            (elem) => { elem.classList.add("is-invalid"); }
-        );
+    function applyValidationStyles() {
+        document.querySelectorAll("input").forEach((elem) => {
+            if (elem.classList.contains("input-validation-error")) {
+                elem.classList.add("is-invalid"); // Apply Bootstrap styling
+            } else if (!elem.classList.contains("input-validation-error")) {
+                elem.classList.remove("is-invalid"); // Remove Bootstrap styling when valid
+            }
+        });
+    }
+
+    // Run the function when the page loads
+    window.addEventListener("DOMContentLoaded", applyValidationStyles);
+
+    // Reapply styles when validation updates (on change, blur, form validation)
+    document.addEventListener("change", applyValidationStyles);
+    document.addEventListener("blur", applyValidationStyles);
+
+    // If using jQuery validation, listen for dynamic updates
+    $(document).ready(function () {
+        $("form").on("submit keyup blur", "input", function () {
+            applyValidationStyles(); // Reapply styles dynamically
+        });
     });
 
     // Function to load a script dynamically, works in both Development and Production environments
@@ -34,18 +52,21 @@
         document.head.appendChild(script);
     }
 
-    // Check and load jQuery if not already loaded
-    if (typeof jQuery === 'undefined') {
-        loadScript(jQueryPath);
-    }
+    window.addEventListener("DOMContentLoaded", () => {
+        if (window.jQuery) {
+            console.log("jQuery is loaded:", jQuery.fn.jquery);
+            
+            if (!window.jQuery.validator) {
+                console.log("Loading jQuery validation...");
+                loadScript('@Url.Content("~/lib/jquery-validation/dist/jquery.validate.min.js")');
+            }
 
-    // Check and load jQuery Validation if not already loaded
-    if (typeof jQuery === 'undefined' || typeof jQuery.validator === 'undefined') {
-        loadScript(jQueryValidatePath);
-    }
-
-    // Check and load jQuery Validation Unobtrusive if not already loaded
-    if (typeof jQuery === 'undefined' || typeof jQuery.validator === 'undefined' || typeof jQuery.validator.unobtrusive === 'undefined') {
-        loadScript(jQueryValidateUnobtrusivePath);
-    }
+            if (!window.jQuery.validator.unobtrusive) {
+                console.log("Loading jQuery unobtrusive validation...");
+                loadScript('@Url.Content("~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js")');
+            }
+        } else {
+            console.error("jQuery is NOT loaded correctly!");
+        }
+    });
 </script>

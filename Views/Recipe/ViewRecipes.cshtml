@@ -1,1 +1,66 @@
-<h3>The View Recipes view is under construction</h3>
+@model List<BakingIt.Models.Recipe>
+
+<div class="row my-3">
+    <h3>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">
+            <i class="fa fa-arrow-left "></i>
+        </a>
+        Recipes
+    </h3>
+</div>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Error"]
+    </div>
+}
+
+<div>
+    <a class="btn btn-primary mb-3" asp-controller="Recipe" asp-action="CreateRecipe">Create New</a>
+</div>
+
+<table class="table table-striped" id="recipesTable">
+    <thead>
+        <tr>
+            <th>Recipe Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var recipe in Model)
+        {
+            <tr>
+                <td>@recipe.RecipeName</td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="Recipe" asp-action="EditRecipe" asp-route-id="@recipe.RecipeId">Edit</a>
+
+                    <a class="btn btn-danger" asp-controller="Recipe" asp-action="DeleteRecipe" asp-route-id="@recipe.RecipeId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        // DataTable Documentation found here: https://datatables.net/
+        $(document).ready(function () {
+            // Creates DataTable
+            $('#recipesTable').DataTable({
+                columns: [null, { orderable: false }],
+                order: [[0, 'asc']],
+                pageLength: 10,
+                searching: true,
+                language: {
+                    emptyTable: 'None found'
+                }
+            });
+        });
+    </script>
+}

@@ -20,3 +20,31 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* My custom css starts here */
+
+/* initial .form-label is from Bootstrap and only includes margin-bottom: .5rem; */
+.form-label {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* LINKS:  remove the underline from all links & define the color of the text */
+a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+/* LINKS:  change color which hover */
+a:hover {
+  color: #0056b3; /* darker blue when hovering */
+}
+
+/* VALIDATION:  this works in conjunction with the _ValidationScriptsPartial.cshtml and will render placeholder text inside an <input> element in red */
+input.input-validation-error::placeholder {
+    color: #dc3545;
+}
+
+input:not(.input-validation-error)::placeholder {
+    color: inherit; /* Resets to default for correct entry*/
+}

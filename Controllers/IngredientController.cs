@@ -1,17 +1,22 @@
 using BakingIt.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 public class IngredientController : Controller
 {
     private readonly IBakingItRepository<Conversion> _conversionRepository;
     private readonly IBakingItRepository<Ingredient> _ingredientRepository;
+    private readonly IBakingItRepository<Measure> _measureRepository;
 
     public IngredientController(
         IBakingItRepository<Conversion> conversionRepository,
-        IBakingItRepository<Ingredient> ingredientRepository)
+        IBakingItRepository<Ingredient> ingredientRepository,
+        IBakingItRepository<Measure> measureRepository)
     {
         _conversionRepository = conversionRepository;
         _ingredientRepository = ingredientRepository;
+        _measureRepository = measureRepository;
     }
 
     // GET: Display all conversions and ingredients
@@ -32,7 +37,8 @@ public class IngredientController : Controller
     #region Ingredient
     public async Task<IActionResult> ViewIngredients()
     {
-        var ingredients = await _ingredientRepository.GetAllAsync();
+        var ingredients = await _ingredientRepository
+            .GetAllAsync(i => i.Include(x => x.Measure));
         return View(ingredients);
     }
 
@@ -40,8 +46,9 @@ public class IngredientController : Controller
     ///     Create a new Ingredient - Getter
     /// </summary>
     /// <returns></returns>
-    public IActionResult CreateIngredient()
+    public async Task<IActionResult> CreateIngredient()
     {
+        ViewBag.Measures = await GetMeasuresSelectListAsync();
         return View("CreateIngredient");
     }
 
@@ -54,6 +61,18 @@ public class IngredientController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateIngredient(Ingredient ingredient)
     {
+        // Lookup Measure from database using MeasureId
+        var measure = await _measureRepository.GetByIdAsync(ingredient.MeasureId);
+
+        if (measure == null)
+        {
+            ModelState.AddModelError("MeasureId", "Invalid Measure selected.");
+            return View(ingredient);
+        }
+
+        // Assign Measure navigation property before model validation
+        ingredient.Measure = measure;
+
         if (ModelState.IsValid)
         {
             await _ingredientRepository.AddAsync(ingredient);
@@ -63,7 +82,9 @@ public class IngredientController : Controller
         {
             foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
             {
-                Console.WriteLine(error.ErrorMessage);
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.WriteLine("\n" + error.ErrorMessage + "\n");
+                Console.ResetColor();
             }
             return View(ingredient);
         }
@@ -76,6 +97,8 @@ public class IngredientController : Controller
     /// <returns></returns>
     public async Task<IActionResult> EditIngredient(int id)
     {
+        ViewBag.Measures = await GetMeasuresSelectListAsync();
+        
         var ingredient = await _ingredientRepository.GetByIdAsync(id);
         return View(ingredient);
     }
@@ -89,6 +112,18 @@ public class IngredientController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditIngredient(Ingredient ingredient)
     {
+        // Lookup Measure from database using MeasureId
+        var measure = await _measureRepository.GetByIdAsync(ingredient.MeasureId);
+
+        if (measure == null)
+        {
+            ModelState.AddModelError("MeasureId", "Invalid Measure selected.");
+            return View(ingredient);
+        }
+
+        // Assign Measure navigation property before model validation
+        ingredient.Measure = measure;
+
         if(ModelState.IsValid)
         {
             await _ingredientRepository.UpdateAsync(ingredient);
@@ -98,8 +133,13 @@ public class IngredientController : Controller
         {
             foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
             {
-                Console.WriteLine(error.ErrorMessage);
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.WriteLine("\n" + error.ErrorMessage + "\n");
+                Console.ResetColor();
             }
+
+            // Repopulate ViewBag.Measures before returning to the view
+            ViewBag.Measures = await GetMeasuresSelectListAsync();
             return View(ingredient);
         }
     }
@@ -140,4 +180,15 @@ public class IngredientController : Controller
     }
     #endregion  // end of Conversion section
 
+    #region Private Methods
+    private async Task<SelectList> GetMeasuresSelectListAsync()
+    {
+        var measures = await _measureRepository.GetAllAsync();
+        
+        // Order measures alphabetically by MeasureName
+        var sortedMeasures = measures.OrderBy(m => m.MeasureName);
+
+        return new SelectList(sortedMeasures, "MeasureId", "MeasureName");
+    }
+    #endregion
 }

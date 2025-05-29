@@ -13,9 +13,22 @@ public class EBakingItRepository<T> : IBakingItRepository<T> where T : class
         _context = context;
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    // public async Task<IEnumerable<T>> GetAllAsync()
+    // {
+    //     return await _context.Set<T>().ToListAsync();
+    // }
+
+    public async Task<IEnumerable<T>> GetAllAsync(Func<IQueryable<T>, IQueryable<T>>? queryModifier = null)
     {
-        return await _context.Set<T>().ToListAsync();
+        IQueryable<T> query = _context.Set<T>();
+
+        // Apply the modifier if provided (e.g., Includes)
+        if (queryModifier != null)
+        {
+            query = queryModifier(query);
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task<T?> GetByIdAsync(int id)

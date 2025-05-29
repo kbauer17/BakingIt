@@ -1,9 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BakingIt.Models
 {
     public class RecipeIngredient
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]   // Ensure auto-increment
         public int RecipeIngredientId { get; set; } // Primary Key
         public int RecipeId { get; set; } // Foreign Key linking to the Recipe table
         public int IngredientId { get; set; } // Foreign Key linking to the Ingredient table

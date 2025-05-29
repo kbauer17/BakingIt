@@ -1,1 +1,47 @@
-<h3>The Create Recipes view is under construction</h3>
+@model BakingIt.Models.Recipe
+
+<h2>Create Recipe</h2>
+
+<form asp-action="CreateRecipe" method="post">
+    @Html.AntiForgeryToken()
+    <div>
+        <label asp-for="RecipeName"></label>
+        <input asp-for="RecipeName" class="form-control" required />
+    </div>
+    
+    <div>
+        <label asp-for="Instructions"></label>
+        <textarea asp-for="Instructions" class="form-control"></textarea>
+    </div>
+
+    <h3>Ingredients</h3>
+    <div id="ingredientContainer">
+        <div class="ingredient-row">
+            <select name="ingredientIds[]" class="form-control">
+                @foreach (var ingredient in ViewBag.Ingredients)
+                {
+                    <option value="@ingredient.IngredientId">@ingredient.IngredientName</option>
+                }
+            </select>
+            <input type="number" name="quantities[]" class="form-control" placeholder="Quantity" required />
+            <input type="text" name="units[]" class="form-control" placeholder="Unit" required />
+            <button type="button" onclick="removeIngredient(this)">Remove</button>
+        </div>
+    </div>
+
+    <button type="button" onclick="addIngredient()">Add Ingredient</button>
+
+    <button type="submit">Create Recipe</button>
+</form>
+
+<script>
+    function addIngredient() {
+        let container = document.getElementById("ingredientContainer");
+        let newRow = document.querySelector(".ingredient-row").cloneNode(true);
+        container.appendChild(newRow);
+    }
+
+    function removeIngredient(button) {
+        button.parentElement.remove();
+    }
+</script>
