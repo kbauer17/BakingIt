@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
 public class EBakingItRepository<T> : IBakingItRepository<T> where T : class
@@ -56,5 +57,10 @@ public class EBakingItRepository<T> : IBakingItRepository<T> where T : class
             _context.Set<T>().Remove(entity);
             await _context.SaveChangesAsync();
         }
+    }
+
+    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _context.Set<T>().AnyAsync(predicate);
     }
 }

@@ -61,12 +61,21 @@ public class IngredientController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateIngredient(Ingredient ingredient)
     {
+        // check for duplicate IngredientName
+        if (await IngredientExistsAsync(ingredient.IngredientName))
+        {
+            ModelState.AddModelError("IngredientName", "This ingredient already exists.");
+            ViewBag.Measures = await GetMeasuresSelectListAsync();
+            return View(ingredient);
+        }
+
         // Lookup Measure from database using MeasureId
         var measure = await _measureRepository.GetByIdAsync(ingredient.MeasureId);
 
         if (measure == null)
         {
             ModelState.AddModelError("MeasureId", "Invalid Measure selected.");
+            ViewBag.Measures = await GetMeasuresSelectListAsync();
             return View(ingredient);
         }
 
@@ -85,7 +94,9 @@ public class IngredientController : Controller
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 Console.WriteLine("\n" + error.ErrorMessage + "\n");
                 Console.ResetColor();
+                // note:  the <span asp-validation-for="...> will display these error messages in the view
             }
+            ViewBag.Measures = await GetMeasuresSelectListAsync();
             return View(ingredient);
         }
     }
@@ -98,7 +109,7 @@ public class IngredientController : Controller
     public async Task<IActionResult> EditIngredient(int id)
     {
         ViewBag.Measures = await GetMeasuresSelectListAsync();
-        
+
         var ingredient = await _ingredientRepository.GetByIdAsync(id);
         return View(ingredient);
     }
@@ -112,19 +123,28 @@ public class IngredientController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditIngredient(Ingredient ingredient)
     {
+        // check for duplicate IngredientName
+        if (await IngredientExistsAsync(ingredient.IngredientName))
+        {
+            ModelState.AddModelError("IngredientName", "This ingredient already exists.");
+            ViewBag.Measures = await GetMeasuresSelectListAsync();
+            return View(ingredient);
+        }
+
         // Lookup Measure from database using MeasureId
         var measure = await _measureRepository.GetByIdAsync(ingredient.MeasureId);
 
         if (measure == null)
         {
             ModelState.AddModelError("MeasureId", "Invalid Measure selected.");
+            ViewBag.Measures = await GetMeasuresSelectListAsync();
             return View(ingredient);
         }
 
         // Assign Measure navigation property before model validation
         ingredient.Measure = measure;
 
-        if(ModelState.IsValid)
+        if (ModelState.IsValid)
         {
             await _ingredientRepository.UpdateAsync(ingredient);
             return RedirectToAction(nameof(ViewIngredients));
@@ -147,10 +167,10 @@ public class IngredientController : Controller
     public async Task<IActionResult> DeleteIngredient(int id)
     {
         var ingredient = await _ingredientRepository.GetByIdAsync(id);
-        if(ingredient == null)
+        if (ingredient == null)
         {
             TempData["Error"] = "Ingredient not found.";
-            return RedirectToAction("ViewIngredients"); 
+            return RedirectToAction("ViewIngredients");
         }
         try
         {
@@ -184,11 +204,24 @@ public class IngredientController : Controller
     private async Task<SelectList> GetMeasuresSelectListAsync()
     {
         var measures = await _measureRepository.GetAllAsync();
-        
+
         // Order measures alphabetically by MeasureName
         var sortedMeasures = measures.OrderBy(m => m.MeasureName);
 
         return new SelectList(sortedMeasures, "MeasureId", "MeasureName");
     }
+    
+    private async Task<bool> IngredientExistsAsync(string ingredientName)
+    {
+        // Normalize the name for comparison (remove spaces & make lowercase)
+        string normalizedName = new string(ingredientName
+            .Where(c => !char.IsWhiteSpace(c))
+            .ToArray())
+            .ToLower();
+
+        return await _ingredientRepository.ExistsAsync(i =>
+            i.IngredientName.Replace(" ", "").ToLower() == normalizedName);
+    }
+
     #endregion
 }
