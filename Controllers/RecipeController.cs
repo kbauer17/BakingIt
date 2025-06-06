@@ -1,4 +1,5 @@
 using BakingIt.Models;
+using BakingIt.Services;
 using Microsoft.AspNetCore.Mvc;
 
 public class RecipeController : Controller
@@ -6,13 +7,15 @@ public class RecipeController : Controller
     private readonly IBakingItRepository<Recipe> _recipeRepository;
     private readonly IBakingItRepository<Ingredient> _ingredientRepository;
     private readonly IBakingItRepository<RecipeIngredient> _recipeIngredientRepository;
+    private readonly IMeasureService _measureService;
 
     // Inject repository via constructor
-    public RecipeController(IBakingItRepository<Recipe> recipeRepository, IBakingItRepository<Ingredient> ingredientRepository, IBakingItRepository<RecipeIngredient> recipeIngredientRepository)
+    public RecipeController(IBakingItRepository<Recipe> recipeRepository, IBakingItRepository<Ingredient> ingredientRepository, IBakingItRepository<RecipeIngredient> recipeIngredientRepository, IMeasureService measureService)
     {
         _recipeRepository = recipeRepository;
         _ingredientRepository = ingredientRepository;
         _recipeIngredientRepository = recipeIngredientRepository;
+        _measureService = measureService;
     }
 
     // GET: Display all recipes
@@ -35,6 +38,7 @@ public class RecipeController : Controller
     public async Task<IActionResult> CreateRecipe()
     {
         ViewBag.Ingredients =await _ingredientRepository.GetAllAsync(); // Populate dropdown
+        ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
         return View();
     }
 

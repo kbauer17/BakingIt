@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using BakingIt.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<BakingItContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); // requires dotnet add package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation --version 8.0.4
 builder.Services.AddScoped(typeof(IBakingItRepository<>), typeof(EBakingItRepository<>));
+builder.Services.AddScoped<IMeasureService, MeasureService>();
 
 var app = builder.Build();
 

@@ -1,38 +1,60 @@
 @model BakingIt.Models.Recipe
+@{
+    ViewBag.Title = "Create Recipe";
+}
 
-<h2>Create Recipe</h2>
+<h2>@ViewBag.Title</h2>
+<hr />
 
-<form asp-action="CreateRecipe" method="post">
-    @Html.AntiForgeryToken()
-    <div>
-        <label asp-for="RecipeName"></label>
-        <input asp-for="RecipeName" class="form-control" required />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="CreateRecipe" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group col-sm-12">
+                    <label asp-for="RecipeName" class="form-label"></label>
+                    <input asp-for="RecipeName" class="form-control" required />
+                    <span asp-validation-for="RecipeName" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="form-group col-sm-12">
+                    <label asp-for="Instructions" class="form-label"></label>
+                    <textarea asp-for="Instructions" class="form-control"></textarea>
+                </div>
+            </div>
+
+            <h3>Ingredients</h3>
+            <div id="ingredientContainer">
+                <div class="row ingredient-row">
+                    <select name="ingredientIds[]" class="form-control">
+                        @foreach (var ingredient in ViewBag.Ingredients)
+                        {
+                            <option value="@ingredient.IngredientId">@ingredient.IngredientName</option>
+                        }
+                    </select>
+                    <input type="number" name="quantities[]" class="form-control" placeholder="Quantity" required />
+                    <input type="text" name="units[]" class="form-control" placeholder="Unit" required />
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label asp-for="MeasureId" class="form-label"></label>
+                            <select asp-for="MeasureId" asp-items="ViewBag.Measures" class="form-control" required>
+                                <option value="">--Select--</option></select>
+                            <span asp-validation-for="MeasureId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <button type="button" onclick="removeIngredient(this)">Remove</button>
+                </div>
+            </div>
+
+            <button type="button" onclick="addIngredient()">Add Ingredient</button>
+
+            <button type="submit">Create Recipe</button>
+        </form>
     </div>
-    
-    <div>
-        <label asp-for="Instructions"></label>
-        <textarea asp-for="Instructions" class="form-control"></textarea>
-    </div>
-
-    <h3>Ingredients</h3>
-    <div id="ingredientContainer">
-        <div class="ingredient-row">
-            <select name="ingredientIds[]" class="form-control">
-                @foreach (var ingredient in ViewBag.Ingredients)
-                {
-                    <option value="@ingredient.IngredientId">@ingredient.IngredientName</option>
-                }
-            </select>
-            <input type="number" name="quantities[]" class="form-control" placeholder="Quantity" required />
-            <input type="text" name="units[]" class="form-control" placeholder="Unit" required />
-            <button type="button" onclick="removeIngredient(this)">Remove</button>
-        </div>
-    </div>
-
-    <button type="button" onclick="addIngredient()">Add Ingredient</button>
-
-    <button type="submit">Create Recipe</button>
-</form>
+</div>
 
 <script>
     function addIngredient() {
