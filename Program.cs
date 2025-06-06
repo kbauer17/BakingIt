@@ -20,8 +20,14 @@ builder.Services.AddDbContext<BakingItContext>(options =>
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); // requires dotnet add package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation --version 8.0.4
 builder.Services.AddScoped(typeof(IBakingItRepository<>), typeof(EBakingItRepository<>));
 builder.Services.AddScoped<IMeasureService, MeasureService>();
+builder.Services.AddScoped<IPantryIngredientService, PantryIngredientService>();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+};
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -29,7 +35,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-}
+};
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

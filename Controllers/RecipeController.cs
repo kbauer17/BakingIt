@@ -1,5 +1,6 @@
 using BakingIt.Models;
 using BakingIt.Services;
+using BakingIt.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 public class RecipeController : Controller
@@ -8,17 +9,22 @@ public class RecipeController : Controller
     private readonly IBakingItRepository<Ingredient> _ingredientRepository;
     private readonly IBakingItRepository<RecipeIngredient> _recipeIngredientRepository;
     private readonly IMeasureService _measureService;
+    private readonly IPantryIngredientService _pantryIngredientService;
 
     // Inject repository via constructor
-    public RecipeController(IBakingItRepository<Recipe> recipeRepository, IBakingItRepository<Ingredient> ingredientRepository, IBakingItRepository<RecipeIngredient> recipeIngredientRepository, IMeasureService measureService)
+    public RecipeController(IBakingItRepository<Recipe> recipeRepository, IBakingItRepository<Ingredient> ingredientRepository, IBakingItRepository<RecipeIngredient> recipeIngredientRepository, IMeasureService measureService, IPantryIngredientService pantryIngredientService)
     {
         _recipeRepository = recipeRepository;
         _ingredientRepository = ingredientRepository;
         _recipeIngredientRepository = recipeIngredientRepository;
         _measureService = measureService;
+        _pantryIngredientService = pantryIngredientService;
     }
 
-    // GET: Display all recipes
+    /// <summary>
+    ///     Display a table listing all existing Recipes by name
+    /// </summary>
+    /// <returns></returns>
     public async Task<IActionResult> ViewRecipes()
     {
         var recipes = await _recipeRepository.GetAllAsync();
@@ -30,61 +36,59 @@ public class RecipeController : Controller
     {
         var recipe = await _recipeRepository.GetByIdAsync(id);
         if (recipe == null) return NotFound();
-        
+
         return View(recipe);
     }
 
-    // GET: Create Recipe Form
-    public async Task<IActionResult> CreateRecipe()
+    /// <summary>
+    ///     Create a new Recipe - Getter
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public IActionResult CreateRecipe()
     {
-        ViewBag.Ingredients =await _ingredientRepository.GetAllAsync(); // Populate dropdown
-        ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
-        return View();
+        var viewModel = new RecipeViewModel();
+        return View(viewModel);
     }
 
-    // POST: Create New Recipe
-    // [HttpPost]
-    // [ValidateAntiForgeryToken]
-    // public async Task<IActionResult> CreateRecipe(Recipe recipe)
-    // {
-    //     if (ModelState.IsValid)
-    //     {
-    //         await _recipeRepository.AddAsync(recipe);
-    //         return RedirectToAction(nameof(Index));
-    //     }
-    //     return View(recipe);
-    // }
-
-    // POST: Recipe/Create
+    /// <summary>
+    ///     Create a new Recipe - setter
+    /// </summary>
+    /// <param name="viewModel"></param>
+    /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateRecipe(Recipe recipe, List<int> ingredientIds, List<decimal> quantities, List<string> units)
+    public async Task<IActionResult> CreateRecipe(RecipeViewModel viewModel)
     {
-        if (ModelState.IsValid)
+        // Re-populate the lists, otherwise the form will lose this on a failed submission.
+        viewModel.Measures = await _measureService.GetMeasuresSelectListAsync();
+        ViewBag.PantryIngredients = await _pantryIngredientService.GetPantryIngredientsSelectListAsync();
+
+        // Here you might check for ModelState validity. 
+        // Note: You could also validate the inner Recipe entity if you have validations on it.
+        if (!ModelState.IsValid)
         {
-            await _recipeRepository.AddAsync(recipe);
+            // Collect all error messages
+            var allErrors = ModelState
+                .SelectMany(x => x.Value.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
 
-            // Add ingredients to RecipeIngredient table
-            for (int i = 0; i < ingredientIds.Count; i++)
-            {
-                var recipeIngredient = new RecipeIngredient
-                {
-                    RecipeId = recipe.RecipeId,
-                    IngredientId = ingredientIds[i],
-                    Quantity = quantities[i],
-                    Unit = units[i]
-                };
+            // Attach errors to the ViewBag so they can be displayed in the view
+            ViewBag.ModelErrors = allErrors;
 
-                await _recipeIngredientRepository.AddAsync(recipeIngredient);
-            }
-            return RedirectToAction(nameof(ViewRecipes)); 
+            return View(viewModel);
         }
-        ViewBag.Ingredients = await _ingredientRepository.GetAllAsync();
-        return View(recipe);
+
+        // In this approach the view model already contains the Recipe entity. 
+        // Save it directly with your repository.
+        await _recipeRepository.AddAsync(viewModel.Recipe);
+
+        return RedirectToAction("ViewRecipes");
     }
 
     // GET: Edit Recipe
-    public async Task<IActionResult> Edit(int id)
+    public async Task<IActionResult> EditRecipe(int id)
     {
         var recipe = await _recipeRepository.GetByIdAsync(id);
         if (recipe == null) return NotFound();
@@ -95,7 +99,7 @@ public class RecipeController : Controller
     // POST: Update Recipe
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, Recipe recipe)
+    public async Task<IActionResult> EditRecipe(int id, Recipe recipe)
     {
         if (id != recipe.RecipeId) return BadRequest();
 
@@ -110,9 +114,23 @@ public class RecipeController : Controller
     // POST: Delete Recipe
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteRecipe(int id)
     {
         await _recipeRepository.DeleteAsync(id);
         return RedirectToAction(nameof(Index));
+    }
+    
+    /// <summary>
+    ///     Getter for the _RecipeIngredientPartial.cshtml, called via AJAX within CreateRecipe.cshtml
+    /// </summary>
+    /// <param name="indexRi"></param>
+    /// <returns></returns>
+    public async Task<IActionResult> GetRecipeIngredientPartial(int indexRi)
+    {
+        var newIngredient = new RecipeIngredient();
+        ViewData["indexRI"] = indexRi;
+        ViewBag.PantryIngredients = await _pantryIngredientService.GetPantryIngredientsSelectListAsync();
+        ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
+        return PartialView("_RecipeIngredientPartial", newIngredient);
     }
 }

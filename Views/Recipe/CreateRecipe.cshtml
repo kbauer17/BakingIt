@@ -1,69 +1,80 @@
-@model BakingIt.Models.Recipe
+@model BakingIt.ViewModels.RecipeViewModel
 @{
     ViewBag.Title = "Create Recipe";
 }
 
 <h2>@ViewBag.Title</h2>
 <hr />
-
+@if (ViewBag.ModelErrors != null)
+{
+    <ul>
+        @foreach (var error in ViewBag.ModelErrors)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
 <div class="row">
     <div class="col-md-12">
         <form asp-action="CreateRecipe" method="post">
             @Html.AntiForgeryToken()
             <div class="row">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group col-sm-12">
-                    <label asp-for="RecipeName" class="form-label"></label>
-                    <input asp-for="RecipeName" class="form-control" required />
-                    <span asp-validation-for="RecipeName" class="text-danger"></span>
+                <div class="form-group col-sm-6">
+                    <label asp-for="Recipe.RecipeName"></label>
+                    <input asp-for="Recipe.RecipeName" class="form-control" />
+                    <span asp-validation-for="Recipe.RecipeName" class="text-danger"></span>
                 </div>
             </div>
-            
+
             <div class="row mt-3">
                 <div class="form-group col-sm-12">
-                    <label asp-for="Instructions" class="form-label"></label>
-                    <textarea asp-for="Instructions" class="form-control"></textarea>
+                    <label asp-for="Recipe.Instructions"></label>
+                    <textarea asp-for="Recipe.Instructions" class="form-control"></textarea>
+                    <span asp-validation-for="Recipe.Instructions" class="text-danger"></span>
                 </div>
             </div>
 
-            <h3>Ingredients</h3>
-            <div id="ingredientContainer">
-                <div class="row ingredient-row">
-                    <select name="ingredientIds[]" class="form-control">
-                        @foreach (var ingredient in ViewBag.Ingredients)
-                        {
-                            <option value="@ingredient.IngredientId">@ingredient.IngredientName</option>
-                        }
-                    </select>
-                    <input type="number" name="quantities[]" class="form-control" placeholder="Quantity" required />
-                    <input type="text" name="units[]" class="form-control" placeholder="Unit" required />
-                    <div class="col-lg-4 col-md-6 col-sm-12">
-                        <div class="form-group">
-                            <label asp-for="MeasureId" class="form-label"></label>
-                            <select asp-for="MeasureId" asp-items="ViewBag.Measures" class="form-control" required>
-                                <option value="">--Select--</option></select>
-                            <span asp-validation-for="MeasureId" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <button type="button" onclick="removeIngredient(this)">Remove</button>
-                </div>
-            </div>
+            <h3 class="mt-3">
+                Ingredients
+                <button type="button" id="addRecipeIngredientButton" class="btn btn-primary mb-2" novalidate>
+                    <i class="fas fa-plus pr-2"></i>Add Ingredient to Recipe
+                </button>
+            </h3>
+            <fieldset id="RecipeIngredients">
+                
+                @for (int i = 0; i < Model.Recipe.RecipeIngredients.Count; i++)
+                {
+                    <partial name="_RecipeIngredientPartial" for="@Model.Recipe.RecipeIngredients[i]" view-data="@(new ViewDataDictionary(ViewData) { {"indexRI", i} })" />
+                }
+                
+            </fieldset>
 
-            <button type="button" onclick="addIngredient()">Add Ingredient</button>
-
-            <button type="submit">Create Recipe</button>
+            <button type="submit" class="btn btn-success mt-3">Save Recipe</button>
         </form>
     </div>
 </div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script>
-    function addIngredient() {
-        let container = document.getElementById("ingredientContainer");
-        let newRow = document.querySelector(".ingredient-row").cloneNode(true);
-        container.appendChild(newRow);
-    }
-
-    function removeIngredient(button) {
-        button.parentElement.remove();
-    }
-</script>
+    <script>
+        // use ajax to access a controller getter method for displaying the _AliasPartial.cshtml upon a button click by the user
+        var indexRi = $('#RecipeIngredients').children('.recipeIngredients').length; 
+                console.log("Initial indexRi:", indexRi);
+        $("#addRecipeIngredientButton").on("click", function (e) {
+            e.preventDefault();
+            @* var viewPatientDetails = $('#ViewPatientDetails').val();
+                console.log("viewPatientDetails:", viewPatientDetails); *@
+            $.get("/Recipe/GetRecipeIngredientPartial", 
+                { 
+                    indexRi: indexRi, 
+                    @* viewPatientDetails: viewPatientDetails  *@
+                }, 
+                function (data) {
+                    console.log("Received data:", data);
+                $("#RecipeIngredients").append(data);
+                indexRi++;
+                    console.log("Updated indexRi: ", indexRi);
+            });
+        });
+    </script>
+}

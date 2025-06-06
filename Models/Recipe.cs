@@ -8,8 +8,14 @@ namespace BakingIt.Models
 
         [Required(ErrorMessage = "Please enter the Recipe Name")]
         [Display(Name = "Recipe Name")]
-        public required string RecipeName { get; set; }
+        public required string RecipeName { get; init; }
         public string? Instructions { get; set; }
-        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
+        public IList<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
+
+        // Constructor to enforce required properties
+        public Recipe(string recipeName)
+        {
+            RecipeName = recipeName;
+        }
     }
 }
