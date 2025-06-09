@@ -1,37 +1,33 @@
 @model BakingIt.Models.RecipeIngredient
 
 @{
-    // Retrieve the index passed via ViewData
+    // Retrieve the index provided by the parent view
     var i = (int)ViewData["indexRI"];
-    // Set the HTML field prefix so that the binding names become "Recipe.RecipeIngredients[i].PropertyName"
+    // Adjust the template field prefix for correct model binding
     ViewData.TemplateInfo.HtmlFieldPrefix = $"Recipe.RecipeIngredients[{i}]";
 }
 
-<div class="row recipeIngredients mt-3">
-    <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="form-group">
-            <label asp-for="IngredientId">Ingredient Name</label>
-            @* <input asp-for="IngredientId" class="form-control" /> *@
-            <select asp-for="IngredientId" class="form-control" asp-items="ViewBag.PantryIngredients">
-                <option value="">-- Select Ingredient --</option>
-            </select>
-            <span asp-validation-for="IngredientId" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="form-group">
-            <label asp-for="Quantity"></label>
-            <input asp-for="Quantity" class="form-control" />
-            <span asp-validation-for="Quantity" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="form-group">
-            <label asp-for="MeasureId"></label>
-            <select asp-for="MeasureId" class="form-control" asp-items="ViewBag.Measures">
-                <option value="">-- Select Measure --</option>
-            </select>
-            <span asp-validation-for="MeasureId" class="text-danger"></span>
-        </div>
-    </div>
-</div>
+<tr class="recipeIngredientRow">
+    <td>
+        <select asp-for="IngredientId" class="form-control" asp-items="ViewBag.PantryIngredients">
+            <option value="">-- Select Ingredient --</option>
+        </select>
+        <span asp-validation-for="IngredientId" class="text-danger"></span>
+    </td>
+    <td>
+        <input asp-for="Quantity" class="form-control" />
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </td>
+    <td>
+        <select asp-for="MeasureId" class="form-control" asp-items="ViewBag.Measures">
+            <option value="">-- Select Measure --</option>
+        </select>
+        <span asp-validation-for="MeasureId" class="text-danger"></span>
+    </td>
+    <td>
+        <!-- Remove Ingredient button for deleting the row -->
+        <button type="button" class="btn btn-outline-danger removeIngredientRow">
+            <i class="fas fa-trash-alt me-2"></i>Remove Ingredient
+        </button>
+    </td>
+</tr>

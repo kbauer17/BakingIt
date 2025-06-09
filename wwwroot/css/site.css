@@ -29,6 +29,58 @@ body {
   font-weight: 500;
 }
 
+/* COLOR PALLETTE:  Applying a custom color pallette to some things */
+h1, h2, h3, h4, h5, h6 {
+  background-color: #2C3E50; /*Navy Blue  */
+  color: #F5F5DC; /* Cream for contrast */
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
+
+.btn-accent {
+  background-color: #B87333;  /*Copper accent  */
+  color: #F5F5DC;
+  border: none;
+}
+
+.btn-accent:hover {
+  background-color: #A55E2A;  /*Slightly darker for hover */
+}
+
+.btn-accent-outline {
+  background-color: transparent;
+  color: #B87333;
+  border: 2px solid #B87333
+}
+
+.btn-accent-outline:hover {
+  background-color: #B87333;
+  color: #F5F5DC;
+}
+
+.btn-return-outline {
+  background-color: transparent;
+  color: #FFC107;
+  border: 2px solid #FFC107;
+}
+
+.btn-return-outline:hover {
+  color: #212529;
+  background-color: #FFC107;
+  border-color: #FFC107;
+}
+
+.btn-submit {
+  /* slightly lighter dark blue than the header's #2C3E50 */
+  background-color: #34495E;
+  color:#F5F5DC;  /* Same Cream text for contrast */
+  border: none;
+}
+
+.btn-submit:hover {
+  background-color: #B87333;
+}
+
 /* LINKS:  remove the underline from all links & define the color of the text */
 a {
   text-decoration: none;

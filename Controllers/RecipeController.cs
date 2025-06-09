@@ -2,6 +2,7 @@ using BakingIt.Models;
 using BakingIt.Services;
 using BakingIt.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 public class RecipeController : Controller
 {
@@ -44,28 +45,34 @@ public class RecipeController : Controller
     ///     Create a new Recipe - Getter
     /// </summary>
     /// <returns></returns>
-    [HttpGet]
-    public IActionResult CreateRecipe()
+    public async Task<IActionResult> CreateRecipe()
     {
-        var viewModel = new RecipeViewModel();
-        return View(viewModel);
+        var model = new RecipeViewModel();
+
+        // Populate the dropdown lists for the initial page load.
+        ViewBag.PantryIngredients = await _pantryIngredientService.GetPantryIngredientsSelectListAsync();
+        ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
+
+        return View(model);
     }
 
     /// <summary>
-    ///     Create a new Recipe - setter
+    ///     Create a new Recipe - Setter
     /// </summary>
-    /// <param name="viewModel"></param>
+    /// <param name="model"></param>
     /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateRecipe(RecipeViewModel viewModel)
+    public async Task<IActionResult> CreateRecipe(RecipeViewModel model)
     {
-        // Re-populate the lists, otherwise the form will lose this on a failed submission.
-        viewModel.Measures = await _measureService.GetMeasuresSelectListAsync();
-        ViewBag.PantryIngredients = await _pantryIngredientService.GetPantryIngredientsSelectListAsync();
+        if (!ModelState.IsValid)
+        {
+            // Repopulate the dropdown lists if returning due to validation errors.
+            ViewBag.PantryIngredients = await _pantryIngredientService.GetPantryIngredientsSelectListAsync();
+            ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
+            return View(model);
+        }
 
-        // Here you might check for ModelState validity. 
-        // Note: You could also validate the inner Recipe entity if you have validations on it.
         if (!ModelState.IsValid)
         {
             // Collect all error messages
@@ -77,14 +84,32 @@ public class RecipeController : Controller
             // Attach errors to the ViewBag so they can be displayed in the view
             ViewBag.ModelErrors = allErrors;
 
-            return View(viewModel);
+            return View(model);
         }
 
         // In this approach the view model already contains the Recipe entity. 
         // Save it directly with your repository.
-        await _recipeRepository.AddAsync(viewModel.Recipe);
+        await _recipeRepository.AddAsync(model.Recipe);
 
         return RedirectToAction("ViewRecipes");
+    }
+
+    /// <summary>
+    ///     Getter for the _RecipeIngredientPartial.cshtml, called via AJAX within CreateRecipe.cshtml, creates one row in the table
+    /// </summary>
+    /// <param name="indexRI"></param>
+    /// <returns></returns>
+    public async Task<IActionResult> GetRecipeIngredientPartial(int indexRI)
+    {
+        var newIngredient = new RecipeIngredient();
+        // the indexRI is tracking which row in the table is active
+        ViewData["indexRI"] = indexRI;
+
+        // Populate dropdown lists for the partial view.
+        ViewBag.PantryIngredients = await _pantryIngredientService.GetPantryIngredientsSelectListAsync();
+        ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
+
+        return PartialView("_RecipeIngredientPartial", newIngredient);
     }
 
     // GET: Edit Recipe
@@ -119,18 +144,5 @@ public class RecipeController : Controller
         await _recipeRepository.DeleteAsync(id);
         return RedirectToAction(nameof(Index));
     }
-    
-    /// <summary>
-    ///     Getter for the _RecipeIngredientPartial.cshtml, called via AJAX within CreateRecipe.cshtml
-    /// </summary>
-    /// <param name="indexRi"></param>
-    /// <returns></returns>
-    public async Task<IActionResult> GetRecipeIngredientPartial(int indexRi)
-    {
-        var newIngredient = new RecipeIngredient();
-        ViewData["indexRI"] = indexRi;
-        ViewBag.PantryIngredients = await _pantryIngredientService.GetPantryIngredientsSelectListAsync();
-        ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
-        return PartialView("_RecipeIngredientPartial", newIngredient);
-    }
+
 }

@@ -4,7 +4,7 @@
 }
 
 <h2>@ViewBag.Title</h2>
-<hr />
+
 @if (ViewBag.ModelErrors != null)
 {
     <ul>
@@ -14,6 +14,7 @@
         }
     </ul>
 }
+
 <div class="row">
     <div class="col-md-12">
         <form asp-action="CreateRecipe" method="post">
@@ -34,46 +35,66 @@
                 </div>
             </div>
 
-            <h3 class="mt-3">
+            <h3 class="mt-3 d-flex">
                 Ingredients
-                <button type="button" id="addRecipeIngredientButton" class="btn btn-primary mb-2" novalidate>
-                    <i class="fas fa-plus pr-2"></i>Add Ingredient to Recipe
+                <button type="button" id="addRecipeIngredientButton" class="btn btn-accent ms-auto">
+                    <i class="fas fa-plus me-2"></i>Add Ingredient
                 </button>
             </h3>
-            <fieldset id="RecipeIngredients">
-                
-                @for (int i = 0; i < Model.Recipe.RecipeIngredients.Count; i++)
-                {
-                    <partial name="_RecipeIngredientPartial" for="@Model.Recipe.RecipeIngredients[i]" view-data="@(new ViewDataDictionary(ViewData) { {"indexRI", i} })" />
-                }
-                
-            </fieldset>
-
-            <button type="submit" class="btn btn-success mt-3">Save Recipe</button>
+            
+            <table id="RecipeIngredientsTable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Ingredient</th>
+                        <th>Quantity</th>
+                        <th>Measure</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Recipe.RecipeIngredients.Count; i++)
+                    {
+                        <partial name="_RecipeIngredientPartial" for="@Model.Recipe.RecipeIngredients[i]" 
+                                 view-data="@(new ViewDataDictionary(ViewData) { { "indexRI", i } })" />
+                    }
+                </tbody>
+            </table>
+            
+            <div class="mt-3 d-flex">
+                <a asp-controller="Recipe" asp-action="ViewRecipes" class="btn btn-return-outline me-2" >Cancel and Return to Recipe List</a>
+                <button type="submit" class="btn btn-submit">
+                    <i class="fas fa-save me-2"></i>Save Recipe
+                </button>
+                <button type="reset" class="btn btn-accent-outline ms-auto">Clear Form</button>
+            </div>
+            
         </form>
     </div>
 </div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
+    <!-- Ensure that both jQuery and DataTables JS/CSS are included (e.g., in your layout) -->
     <script>
-        // use ajax to access a controller getter method for displaying the _AliasPartial.cshtml upon a button click by the user
-        var indexRi = $('#RecipeIngredients').children('.recipeIngredients').length; 
-                console.log("Initial indexRi:", indexRi);
-        $("#addRecipeIngredientButton").on("click", function (e) {
-            e.preventDefault();
-            @* var viewPatientDetails = $('#ViewPatientDetails').val();
-                console.log("viewPatientDetails:", viewPatientDetails); *@
-            $.get("/Recipe/GetRecipeIngredientPartial", 
-                { 
-                    indexRi: indexRi, 
-                    @* viewPatientDetails: viewPatientDetails  *@
-                }, 
-                function (data) {
-                    console.log("Received data:", data);
-                $("#RecipeIngredients").append(data);
-                indexRi++;
-                    console.log("Updated indexRi: ", indexRi);
+        $(document).ready(function () {
+            // Initialize the DataTable on the ingredients table.
+            var table = $('#RecipeIngredientsTable').DataTable();
+            var rowIndex = table.rows().count();
+
+            $("#addRecipeIngredientButton").on("click", function (e) {
+                e.preventDefault();
+                
+                $.get("/Recipe/GetRecipeIngredientPartial", { indexRI: rowIndex }, function (data) {
+                    // Append the new row markup to the DataTable.
+                    table.row.add($(data)).draw();
+                    rowIndex++;
+                });
+            });
+
+            // Delegate event listener for removing an ingredient row
+            $('#RecipeIngredientsTable').on("click", ".removeIngredientRow", function () {
+                var row = $(this).closest("tr");
+                table.row(row).remove().draw();
             });
         });
     </script>
