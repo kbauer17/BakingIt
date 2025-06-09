@@ -5,10 +5,10 @@
 
 <div class="row my-3">
     <h3>
-        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">
-            <i class="fa fa-arrow-left "></i>
+        <a class="btn btn-accent me-2" asp-controller="Home" asp-action="Index">
+            <i class="fa fa-arrow-left"></i>
         </a>
-        @ViewBag.Title;
+        @ViewBag.Title
     </h3>
 </div>
 @if (TempData["Message"] != null)
@@ -25,7 +25,7 @@
 }
 
 <div>
-    <a class="btn btn-primary mb-3" asp-controller="Ingredient" asp-action="CreateIngredient">Create New</a>
+    <a class="btn btn-accent mb-3" asp-controller="Ingredient" asp-action="CreateIngredient">Create New</a>
 </div>
 
 <table class="table table-striped" id="ingredientsTable">
@@ -47,9 +47,13 @@
                 <td>@ingredient.Measure?.MeasureName</td>
                 <td>@ingredient.PurchaseCost</td>
                 <td class="d-flex gap-2">
-                    <a class="btn btn-primary" asp-controller="Ingredient" asp-action="EditIngredient" asp-route-id="@ingredient.IngredientId">Update Ingredient</a>
+                    <a class="btn btn-accent" asp-controller="Ingredient" asp-action="EditIngredient" asp-route-id="@ingredient.IngredientId">
+                        Update Ingredient
+                    </a>
 
-                    <a class="btn btn-outline-danger" asp-controller="Ingredient" asp-action="DeleteIngredient" asp-route-id="@ingredient.IngredientId">Delete Ingredient</a>
+                    <a class="btn btn-outline-danger" asp-controller="Ingredient" asp-action="DeleteIngredient" asp-route-id="@ingredient.IngredientId">
+                        <i class="fas fa-trash-alt me-2"></i>Delete Ingredient
+                    </a>
                 </td>
             </tr>
         }

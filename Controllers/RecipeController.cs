@@ -137,12 +137,27 @@ public class RecipeController : Controller
     }
 
     // POST: Delete Recipe
-    [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteRecipe(int id)
     {
-        await _recipeRepository.DeleteAsync(id);
-        return RedirectToAction(nameof(Index));
+        var recipe = await _recipeRepository.GetByIdAsync(id);
+
+        if (recipe == null)
+        {
+            TempData["Error"] = "Recipe not found";
+            return RedirectToAction("ViewRecipes");
+        }
+
+        try
+        {
+            await _recipeRepository.DeleteAsync(id);
+            TempData["Message"] = "Recipe successfully deleted.";
+        }
+        catch (Exception)
+        {
+            TempData["Error"] = "Failed to delete Recipe.";
+        }
+        
+        return RedirectToAction("ViewRecipes");
     }
 
 }

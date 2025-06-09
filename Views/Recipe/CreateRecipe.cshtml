@@ -21,7 +21,7 @@
             @Html.AntiForgeryToken()
             <div class="row">
                 <div class="form-group col-sm-6">
-                    <label asp-for="Recipe.RecipeName"></label>
+                    <label asp-for="Recipe.RecipeName" class="form-label"></label>
                     <input asp-for="Recipe.RecipeName" class="form-control" />
                     <span asp-validation-for="Recipe.RecipeName" class="text-danger"></span>
                 </div>
@@ -29,7 +29,7 @@
 
             <div class="row mt-3">
                 <div class="form-group col-sm-12">
-                    <label asp-for="Recipe.Instructions"></label>
+                    <label asp-for="Recipe.Instructions" class="form-label"></label>
                     <textarea asp-for="Recipe.Instructions" class="form-control"></textarea>
                     <span asp-validation-for="Recipe.Instructions" class="text-danger"></span>
                 </div>
@@ -42,7 +42,7 @@
                 </button>
             </h3>
             
-            <table id="RecipeIngredientsTable" class="table table-bordered">
+            <table id="RecipeIngredientsTable" class="table table-striped">
                 <thead>
                     <tr>
                         <th>Ingredient</th>

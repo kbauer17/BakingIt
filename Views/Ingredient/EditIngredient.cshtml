@@ -4,7 +4,6 @@
 }
  
 <h1>@ViewBag.Title</h1>
-<hr />
 
 <div class="row">
     <div class="col-md-12">
@@ -46,8 +45,8 @@
             </div>
 
             <div class="d-flex gap-2 mt-3">
-                <a class="btn btn-outline-warning" asp-controller="Ingredient" asp-action="ViewIngredients">Discard Changes</a>
-                <input type="submit" value="Save Changes" class="btn btn-primary" />
+                <a class="btn btn-return-outline" asp-controller="Ingredient" asp-action="ViewIngredients">Discard Changes</a>
+                <input type="submit" value="Save Changes" class="btn btn-submit" />
             </div>
         </form>
     </div>
