@@ -1,0 +1,40 @@
+@model BakingIt.Models.Recipe
+@{
+    ViewBag.Title = "Recipe Details - " + Model.RecipeName;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+
+            <!-- Recipe Title -->
+            <h3 class="d-flex align-items-center">
+                <a class="btn btn-accent" asp-controller="Recipe" asp-action="ViewRecipes">
+                    <i class="fa fa-arrow-left "></i>
+                </a>
+                <span class="flex-grow-1 text-center">@Model.RecipeName</span>
+                <a href="@Url.Action("EditRecipe", new { id = Model.RecipeId })" class="btn btn-accent-outline">
+                    <i class="fas fa-edit"></i> Edit Recipe
+                </a>
+            </h3>
+
+            <!-- Recipe Instructions -->
+            <div class="mb-4">
+                <h4>Instructions</h4>
+                <p class="ms-3">@Model.Instructions</p>
+            </div>
+
+            <!-- Recipe Ingredients -->
+            <div class="mb-4">
+                <h4>Ingredients</h4>
+                <dl class="row ms-2">
+                    @foreach (var ingredient in Model.RecipeIngredients)
+                    {
+                        <dt class="col-sm-2">@ingredient.Ingredient.IngredientName</dt>
+                        <dd class="col-sm-10">@ingredient.Quantity @ingredient.Measure.MeasureAbbreviation</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

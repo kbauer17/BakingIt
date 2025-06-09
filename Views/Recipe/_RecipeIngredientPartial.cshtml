@@ -2,7 +2,7 @@
 
 @{
     // Retrieve the index provided by the parent view
-    var i = (int)ViewData["indexRI"];
+    var i = (int)ViewData["indexRI"]!;
     // Adjust the template field prefix for correct model binding
     ViewData.TemplateInfo.HtmlFieldPrefix = $"Recipe.RecipeIngredients[{i}]";
 }

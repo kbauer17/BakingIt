@@ -41,7 +41,7 @@
             <tr>
                 <td>@recipe.RecipeName</td>
                 <td>
-                    <a class="btn btn-accent" asp-controller="Recipe" asp-action="EditRecipe" asp-route-id="@recipe.RecipeId">Update Recipe</a>
+                    <a class="btn btn-accent" asp-controller="Recipe" asp-action="RecipeDetails" asp-route-id="@recipe.RecipeId">View Recipe Details</a>
 
                     <a class="btn btn-outline-danger" asp-controller="Recipe" asp-action="DeleteRecipe" asp-route-id="@recipe.RecipeId">
                         <i class="fas fa-trash-alt me-2"></i>Delete Recipe</a>

@@ -3,6 +3,7 @@ using BakingIt.Services;
 using BakingIt.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 public class RecipeController : Controller
 {
@@ -33,9 +34,14 @@ public class RecipeController : Controller
     }
 
     // GET: Recipe Details
-    public async Task<IActionResult> Details(int id)
+    public async Task<IActionResult> RecipeDetails(int id)
     {
-        var recipe = await _recipeRepository.GetByIdAsync(id);
+        var recipe = await _recipeRepository.GetQueryable()
+            .Include(r => r.RecipeIngredients)
+                .ThenInclude(ri => ri.Ingredient)
+            .Include(r => r.RecipeIngredients)
+                .ThenInclude(ri => ri.Measure)
+            .FirstOrDefaultAsync(r => r.RecipeId == id);
         if (recipe == null) return NotFound();
 
         return View(recipe);
@@ -70,14 +76,10 @@ public class RecipeController : Controller
             // Repopulate the dropdown lists if returning due to validation errors.
             ViewBag.PantryIngredients = await _pantryIngredientService.GetPantryIngredientsSelectListAsync();
             ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
-            return View(model);
-        }
 
-        if (!ModelState.IsValid)
-        {
             // Collect all error messages
             var allErrors = ModelState
-                .SelectMany(x => x.Value.Errors)
+                .SelectMany(x => x.Value!.Errors)
                 .Select(e => e.ErrorMessage)
                 .ToList();
 
@@ -115,8 +117,14 @@ public class RecipeController : Controller
     // GET: Edit Recipe
     public async Task<IActionResult> EditRecipe(int id)
     {
-        var recipe = await _recipeRepository.GetByIdAsync(id);
+        var recipe = await _recipeRepository.GetQueryable()
+            .Include(r => r.RecipeIngredients)
+                .ThenInclude(ri => ri.Ingredient)
+            .Include(r => r.RecipeIngredients)
+                .ThenInclude(ri => ri.Measure)
+            .FirstOrDefaultAsync(r => r.RecipeId == id);
         if (recipe == null) return NotFound();
+        ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
 
         return View(recipe);
     }
@@ -131,7 +139,7 @@ public class RecipeController : Controller
         if (ModelState.IsValid)
         {
             await _recipeRepository.UpdateAsync(recipe);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(RecipeDetails));
         }
         return View(recipe);
     }

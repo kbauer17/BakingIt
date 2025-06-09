@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using BakingIt.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class EBakingItRepository<T> : IBakingItRepository<T> where T : class
@@ -63,4 +64,10 @@ public class EBakingItRepository<T> : IBakingItRepository<T> where T : class
     {
         return await _context.Set<T>().AnyAsync(predicate);
     }
+
+    public IQueryable<T> GetQueryable()
+    {
+        return _context.Set<T>();
+    }
+    
 }

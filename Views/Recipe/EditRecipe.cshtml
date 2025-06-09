@@ -1,1 +1,75 @@
-<h3>The Edit Recipes view is under construction</h3>
+@model BakingIt.Models.Recipe
+
+@{
+    ViewBag.Title = "Edit Recipe - " + Model.RecipeName;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <h3 class="text-center mb-4">Edit Recipe</h3>
+
+            <form asp-action="EditRecipe" method="post">
+                @Html.AntiForgeryToken()
+                <!-- Hidden input for RecipeId -->
+                <input type="hidden" asp-for="RecipeId" />
+
+                <!-- Recipe Name -->
+                <div class="mb-3">
+                    <label asp-for="RecipeName" class="form-label"></label>
+                    <input asp-for="RecipeName" class="form-control" />
+                    <span asp-validation-for="RecipeName" class="text-danger"></span>
+                </div>
+
+                <!-- Recipe Instructions -->
+                <div class="mb-3">
+                    <label asp-for="Instructions" class="form-label"></label>
+                    <textarea asp-for="Instructions" class="form-control"></textarea>
+                    <span asp-validation-for="Instructions" class="text-danger"></span>
+                </div>
+
+                <!-- Recipe Ingredients -->
+                <h4>Ingredients</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Quantity</th>
+                            <th>Measure</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.RecipeIngredients.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Model.RecipeIngredients[i].Ingredient.IngredientName
+                                    <!-- Hidden inputs for IDs required for model binding -->
+                                    <input type="hidden" asp-for="RecipeIngredients[i].RecipeIngredientId" />
+                                    <input type="hidden" asp-for="RecipeIngredients[i].Ingredient.IngredientId" />
+                                </td>
+                                <td>
+                                    <input asp-for="RecipeIngredients[i].Quantity" class="form-control" />
+                                    <span asp-validation-for="RecipeIngredients[i].Quantity" class="text-danger"></span>
+                                </td>
+                                <td>
+                                    <select asp-for="RecipeIngredients[i].MeasureId" class="form-control"
+                                            asp-items="@ViewBag.Measures">
+                                        <option value="">Select a Measure</option>
+                                    </select>
+                                    <span asp-validation-for="RecipeIngredients[i].MeasureId" class="text-danger"></span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

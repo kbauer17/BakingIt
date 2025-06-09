@@ -13,4 +13,5 @@ public interface IBakingItRepository<T> where T : class
     Task UpdateAsync(T entity);
     Task DeleteAsync(int id);
     Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
+    IQueryable<T> GetQueryable();
 }
