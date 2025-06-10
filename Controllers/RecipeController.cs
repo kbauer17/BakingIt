@@ -123,25 +123,51 @@ public class RecipeController : Controller
             .Include(r => r.RecipeIngredients)
                 .ThenInclude(ri => ri.Measure)
             .FirstOrDefaultAsync(r => r.RecipeId == id);
-        if (recipe == null) return NotFound();
-        ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
 
-        return View(recipe);
+        if (recipe == null) return NotFound();
+
+        var recipeViewModel = new RecipeViewModel
+        {
+            Recipe = recipe,
+            Measures = await _measureService.GetMeasuresSelectListAsync()
+        };
+
+        return View(recipeViewModel);
     }
 
     // POST: Update Recipe
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditRecipe(int id, Recipe recipe)
+    public async Task<IActionResult> EditRecipe(RecipeViewModel model)
     {
-        if (id != recipe.RecipeId) return BadRequest();
-
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            await _recipeRepository.UpdateAsync(recipe);
-            return RedirectToAction(nameof(RecipeDetails));
+            // Collect all error messages
+            var allErrors = ModelState
+                .SelectMany(x => x.Value!.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+
+            // Attach errors to the ViewBag so they can be displayed in the view
+            ViewBag.ModelErrors = allErrors;
+
+            return View(model);
         }
-        return View(recipe);
+
+        // Replace each model-bound Ingredient with is tracked instance from the database.
+        // This is not affecting the RecipeIngredients
+        foreach (var recipeIngredient in model.Recipe.RecipeIngredients)
+        {
+            var existingIngredient = await _ingredientRepository.GetByIdAsync(recipeIngredient.Ingredient.IngredientId);
+            if (existingIngredient != null)
+            {
+                recipeIngredient.Ingredient= existingIngredient;
+            }
+        }
+
+        await _recipeRepository.UpdateAsync(model.Recipe);
+        return RedirectToAction(nameof(RecipeDetails), new { id = model.Recipe.RecipeId });
+
     }
 
     // POST: Delete Recipe
