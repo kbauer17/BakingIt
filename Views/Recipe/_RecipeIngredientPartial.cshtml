@@ -9,9 +9,19 @@
 
 <tr class="recipeIngredientRow">
     <td>
-        <select asp-for="IngredientId" class="form-control" asp-items="ViewBag.PantryIngredients">
-            <option value="">-- Select Ingredient --</option>
-        </select>
+        @if(Model.Ingredient != null && Model.Ingredient.IngredientId > 0)
+        {
+            <span>@Model.Ingredient.IngredientName</span>
+            <input type="hidden" asp-for="RecipeIngredientId" />
+            <input type="hidden" asp-for="IngredientId" />
+            <input type="hidden" asp-for="MeasureId" />
+        }
+        else
+        {
+            <select asp-for="IngredientId" class="form-control" asp-items="ViewBag.PantryIngredients">
+                <option value="">-- Select Ingredient --</option>
+            </select>
+        }
         <span asp-validation-for="IngredientId" class="text-danger"></span>
     </td>
     <td>

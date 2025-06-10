@@ -132,6 +132,9 @@ public class RecipeController : Controller
             Measures = await _measureService.GetMeasuresSelectListAsync()
         };
 
+        ViewBag.PantryIngredients = await _pantryIngredientService.GetPantryIngredientsSelectListAsync();
+        ViewBag.Measures = await _measureService.GetMeasuresSelectListAsync();
+
         return View(recipeViewModel);
     }
 
@@ -153,19 +156,63 @@ public class RecipeController : Controller
 
             return View(model);
         }
+        
+        var existingRecipe = await _recipeRepository.GetQueryable()
+            .Include(er => er.RecipeIngredients)
+                .ThenInclude(ri => ri.Ingredient)
+            .Include(er => er.RecipeIngredients)
+                .ThenInclude(ri => ri.Measure)
+            .FirstOrDefaultAsync(er => er.RecipeId == model.Recipe.RecipeId);
 
-        // Replace each model-bound Ingredient with is tracked instance from the database.
-        // This is not affecting the RecipeIngredients
-        foreach (var recipeIngredient in model.Recipe.RecipeIngredients)
+        if (existingRecipe == null) return NotFound();
+
+        // map the updates to simple properties
+        existingRecipe.RecipeName = model.Recipe.RecipeName;
+        existingRecipe.Instructions = model.Recipe.Instructions;
+
+        // Reconcile RecipeIngredients
+        var updatedIngredients = model.Recipe.RecipeIngredients;
+        var currentIngredients = existingRecipe.RecipeIngredients;
+
+        // Remove ingredients that are missing in the updated list
+        foreach (var existing in currentIngredients.ToList())
         {
-            var existingIngredient = await _ingredientRepository.GetByIdAsync(recipeIngredient.Ingredient.IngredientId);
-            if (existingIngredient != null)
+            if (!updatedIngredients.Any(ui => ui.RecipeIngredientId == existing.RecipeIngredientId))
             {
-                recipeIngredient.Ingredient= existingIngredient;
+                currentIngredients.Remove(existing);
+                await _recipeIngredientRepository.DeleteAsync(existing.RecipeIngredientId);
             }
         }
 
-        await _recipeRepository.UpdateAsync(model.Recipe);
+        // Update or add new ingredients
+        foreach (var updated in updatedIngredients)
+        {
+            if (updated.RecipeIngredientId > 0)
+            {
+                // this is an existing ingredient - just update the fields
+                var existing = currentIngredients.FirstOrDefault(ci => ci.RecipeIngredientId == updated.RecipeIngredientId);
+                if (existing != null)
+                {
+                    existing.IngredientId = updated.IngredientId;
+                    existing.Quantity = updated.Quantity;
+                    existing.MeasureId = updated.MeasureId;
+                }
+            }
+            else
+            {
+                // this is a newly added ingredient.  Create a new RecipeIngredient entity
+                RecipeIngredient newIngredient = new RecipeIngredient
+                {
+                    IngredientId = updated.IngredientId,
+                    Quantity = updated.Quantity,
+                    MeasureId = updated.MeasureId
+                };
+                currentIngredients.Add(newIngredient);
+                await _recipeIngredientRepository.AddAsync(newIngredient);
+            }
+        }
+
+        await _recipeRepository.UpdateAsync(existingRecipe);
         return RedirectToAction(nameof(RecipeDetails), new { id = model.Recipe.RecipeId });
 
     }

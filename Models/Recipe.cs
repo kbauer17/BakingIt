@@ -6,9 +6,9 @@ namespace BakingIt.Models
     {
         public int RecipeId { get; set; }
 
-        [Required(ErrorMessage = "Please enter the Recipe Name")]
         [Display(Name = "Recipe Name")]
-        public required string RecipeName { get; init; }
+        public string? RecipeName { get; set; }
+        [Display(Name = "Instructions or Notes")]
         public string? Instructions { get; set; }
         public IList<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
 
