@@ -12,15 +12,17 @@ public class RecipeController : Controller
     private readonly IBakingItRepository<RecipeIngredient> _recipeIngredientRepository;
     private readonly IMeasureService _measureService;
     private readonly IPantryIngredientService _pantryIngredientService;
+    private readonly IRecipeCalculationService _recipeCalculationService;
 
     // Inject repository via constructor
-    public RecipeController(IBakingItRepository<Recipe> recipeRepository, IBakingItRepository<Ingredient> ingredientRepository, IBakingItRepository<RecipeIngredient> recipeIngredientRepository, IMeasureService measureService, IPantryIngredientService pantryIngredientService)
+    public RecipeController(IBakingItRepository<Recipe> recipeRepository, IBakingItRepository<Ingredient> ingredientRepository, IBakingItRepository<RecipeIngredient> recipeIngredientRepository, IMeasureService measureService, IPantryIngredientService pantryIngredientService, IRecipeCalculationService recipeCalculationService)
     {
         _recipeRepository = recipeRepository;
         _ingredientRepository = ingredientRepository;
         _recipeIngredientRepository = recipeIngredientRepository;
         _measureService = measureService;
         _pantryIngredientService = pantryIngredientService;
+        _recipeCalculationService = recipeCalculationService;
     }
 
     /// <summary>
@@ -156,7 +158,7 @@ public class RecipeController : Controller
 
             return View(model);
         }
-        
+
         var existingRecipe = await _recipeRepository.GetQueryable()
             .Include(er => er.RecipeIngredients)
                 .ThenInclude(ri => ri.Ingredient)
@@ -237,8 +239,30 @@ public class RecipeController : Controller
         {
             TempData["Error"] = "Failed to delete Recipe.";
         }
-        
+
         return RedirectToAction("ViewRecipes");
+    }
+    
+    /// <summary>
+    ///     Display a table listing all calculated Recipes by name, cost
+    /// </summary>
+    /// <returns></returns>
+    public async Task<IActionResult> ViewCalculatedRecipes()
+    {
+        var recipes = await _recipeRepository.GetAllAsync();
+        var model = new List<RecipeViewModel>();
+
+        foreach (var recipe in recipes)
+        {
+            var viewModel = new RecipeViewModel
+            {
+                Recipe = recipe,
+                TotalCost = await _recipeCalculationService.CalculateRecipeCostAsync(recipe.RecipeId)
+            };
+            model.Add(viewModel);
+        }
+
+        return View(model);
     }
 
 }

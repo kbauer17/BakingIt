@@ -1,0 +1,70 @@
+@using BakingIt.ViewModels
+@model List<RecipeViewModel>
+@{
+    ViewBag.Title = "List Calculated Recipes";
+}
+
+<div class="row my-3">
+    <h3>
+        <a class="btn btn-accent me-2" asp-controller="Home" asp-action="Index">
+            <i class="fa fa-arrow-left "></i>
+        </a>
+        Calculated Recipes
+    </h3>
+</div>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Error"]
+    </div>
+}
+
+@* <div>
+    <a class="btn btn-accent mb-3" asp-controller="Recipe" asp-action="CreateRecipe">Create New</a>
+</div> *@
+
+<table class="table table-striped" id="calculateRecipesTable">
+    <thead>
+        <tr>
+            <th>Recipe Name</th>
+            <th>Material Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var recipe in Model)
+        {
+            <tr>
+                <td>@recipe.Recipe.RecipeName</td>
+                <td>
+                    @(recipe.TotalCost.HasValue 
+                        ? recipe.TotalCost.Value.ToString("C") 
+                        : String.Empty)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        // DataTable Documentation found here: https://datatables.net/
+        $(document).ready(function () {
+            // Creates DataTable
+            $('#calculateRecipesTable').DataTable({
+                columns: [null, null],
+                order: [[0, 'asc']],
+                pageLength: 10,
+                searching: true,
+                language: {
+                    emptyTable: 'None found'
+                }
+            });
+        });
+    </script>
+}

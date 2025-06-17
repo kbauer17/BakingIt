@@ -21,6 +21,7 @@ builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); // requ
 builder.Services.AddScoped(typeof(IBakingItRepository<>), typeof(EBakingItRepository<>));
 builder.Services.AddScoped<IMeasureService, MeasureService>();
 builder.Services.AddScoped<IPantryIngredientService, PantryIngredientService>();
+builder.Services.AddScoped<IRecipeCalculationService, RecipeCalculationService>();
 
 var app = builder.Build();
 
