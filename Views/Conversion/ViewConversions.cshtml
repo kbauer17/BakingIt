@@ -1,0 +1,73 @@
+@model List<BakingIt.Models.Conversion>
+@{
+    ViewBag.Title = "List All Conversions";
+}
+
+<div class="row my-3">
+    <h3>
+        <a class="btn btn-accent me-2" asp-controller="Home" asp-action="Index">
+            <i class="fa fa-arrow-left "></i>
+        </a>
+        Conversions
+    </h3>
+</div>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Error"]
+    </div>
+}
+
+<div>
+    <a class="btn btn-accent mb-3" asp-controller="Conversion" asp-action="CreateConversion">Create New</a>
+</div>
+
+<table class="table table-striped" id="conversionsTable">
+    <thead>
+        <tr>
+            <th>Conversion Name</th>
+            <th>Notes</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var conversion in Model)
+        {
+            <tr>
+                <td>@conversion.ConversionName</td>
+                <td>@conversion.Notes</td>
+                <td>
+                    <a class="btn btn-accent" asp-controller="Conversion" asp-action="EditConversion" asp-route-id="@conversion.ConversionId">Edit Conversion</a>
+
+                    <a class="btn btn-outline-danger ms-2" asp-controller="Conversion" asp-action="DeleteConversion" asp-route-id="@conversion.ConversionId"
+                        onclick="return confirm('Are you sure you want to delete this Conversion?');">
+                        <i class="fas fa-trash-alt me-2"></i>Delete Conversion</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        // DataTable Documentation found here: https://datatables.net/
+        $(document).ready(function () {
+            // Creates DataTable
+            $('#conversionsTable').DataTable({
+                columns: [null, null, { orderable: false }],
+                order: [[0, 'asc']],
+                pageLength: 10,
+                searching: true,
+                language: {
+                    emptyTable: 'None found'
+                }
+            });
+        });
+    </script>
+}

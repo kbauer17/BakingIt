@@ -1,0 +1,82 @@
+@model BakingIt.Models.Conversion
+@{
+    ViewBag.Title = "Create Conversion";
+}
+ 
+<h1>@ViewBag.Title</h1>
+
+@if (ViewBag.ModelErrors != null)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach(var error in ViewBag.ModelErrors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="post" novalidate>
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group col-sm-6">
+                    <label asp-for="IngredientId" class="form-label"></label>
+                        <select asp-for="IngredientId" asp-items="ViewBag.PantryIngredients" class="form-control" required>
+                            <option value="">--Select--</option></select>
+                        <span asp-validation-for="IngredientId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label asp-for="ConversionName" class="form-label"></label>
+                    <input type="text" asp-for="ConversionName" class="form-control" maxlength="100" required placeholder="Example:  Flour - Pound to Cup"/>
+                    <span asp-validation-for="ConversionName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="form-group col-sm-12">
+                    <label asp-for="Notes" class="form-label"></label>
+                    <textarea asp-for="Notes" class="form-control" placeholder="Example:  1 Pound = 3.63 Cups"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label asp-for="FromMeasureId" class="form-label"></label>
+                        <select asp-for="FromMeasureId" asp-items="ViewBag.Measures" class="form-control" required>
+                            <option value="">--Select--</option></select>
+                        <span asp-validation-for="FromMeasureId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label asp-for="ToMeasureId" class="form-label"></label>
+                        <select asp-for="ToMeasureId" asp-items="ViewBag.Measures" class="form-control" required>
+                            <option value="">--Select--</option></select>
+                        <span asp-validation-for="ToMeasureId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label asp-for="ConversionFactor" class="form-label"></label>
+                        <input type="number" step="0.01" min="0" asp-for="ConversionFactor" class="form-control" required placeholder="Example:  3.63"/>
+                        <span asp-validation-for="ConversionFactor" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+                <a asp-controller="Conversion" asp-action="ViewConversions" class="btn btn-return-outline mb-3" >Cancel and Return to Conversion List</a>
+                <input type="submit" value="Create New Conversion" class="btn btn-submit mb-3" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
