@@ -4,14 +4,6 @@
 
 <div class="container d-flex flex-column align-items-center mt-4">
     <h3 class="text-center w-50">Welcome to BakingIt! <br> Select an Action:</h3>
-    
-    <a asp-controller="Ingredient" asp-action="ViewIngredients" class="card w-50 text-center text-decoration-none">
-        <div class="card-body">
-            <h5 class="card-title">Pantry Ingredients</h5>
-            <p class="card-text">Click here to add or update Ingredients</p>
-        </div>
-    </a>
-    
 
     <a asp-controller="Recipe" asp-action="ViewRecipes" class="card w-50 text-center text-decoration-none mt-3">
         <div class="card-body">
@@ -20,17 +12,31 @@
         </div>
     </a>
 
-    <a asp-controller="Conversion" asp-action="ViewConversions" class="card w-50 text-center text-decoration-none mt-3">
-        <div class="card-body">
-            <h5 class="card-title">Conversions</h5>
-            <p class="card-text">Click here to add or update Conversions.</p>
-        </div>
-    </a>
-
     <a asp-controller="Recipe" asp-action="ViewCalculatedRecipes" class="card w-50 text-center text-decoration-none mt-3">
         <div class="card-body">
             <h5 class="card-title">Recipes Calculated</h5>
             <p class="card-text">Click here to see Material Cost of Recipes</p>
+        </div>
+    </a>
+
+    <a asp-controller="Ingredient" asp-action="ViewIngredients" class="card w-50 text-center text-decoration-none">
+        <div class="card-body">
+            <h5 class="card-title">Pantry Ingredients</h5>
+            <p class="card-text">Click here to add or update Ingredients</p>
+        </div>
+    </a>
+
+    <a asp-controller="Measure" asp-action="ViewMeasures" class="card w-50 text-center text-decoration-none">
+        <div class="card-body">
+            <h5 class="card-title">Measures</h5>
+            <p class="card-text">Click here to add or update Measures</p>
+        </div>
+    </a>
+
+    <a asp-controller="Conversion" asp-action="ViewConversions" class="card w-50 text-center text-decoration-none mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Conversions</h5>
+            <p class="card-text">Click here to add or update Conversions.</p>
         </div>
     </a>
 </div>

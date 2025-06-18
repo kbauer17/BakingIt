@@ -1,0 +1,75 @@
+@model List<BakingIt.Models.Measure>
+@{
+    ViewBag.Title = "Measures";
+}
+
+<div class="row my-3">
+    <h3>
+        <a class="btn btn-accent me-2" asp-controller="Home" asp-action="Index">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+        @ViewBag.Title
+    </h3>
+</div>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Error"]
+    </div>
+}
+
+<div>
+    <a class="btn btn-accent mb-3" asp-controller="Measure" asp-action="CreateMeasure">Create New</a>
+</div>
+
+<table class="table table-striped" id="measuresTable">
+    <thead>
+        <tr>
+            <th>Measure Name</th>
+            <th>Measure Abbreviation</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var measure in Model)
+        {
+            <tr>
+                <td>@measure.MeasureName</td>
+                <td>@measure.MeasureAbbreviation</td>
+                <td class="d-flex gap-2">
+                    <a class="btn btn-accent" asp-controller="Measure" asp-action="EditMeasure" asp-route-id="@measure.MeasureId">
+                        Edit Measure
+                    </a>
+
+                    <a class="btn btn-outline-danger" asp-controller="Measure" asp-action="DeleteMeasure" asp-route-id="@measure.MeasureId" onclick="return confirm('Are you sure you want to delete this Measure?');">
+                        <i class="fas fa-trash-alt me-2"></i>Delete Measure
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        // DataTable Documentation found here: https://datatables.net/
+        $(document).ready(function () {
+            // Creates DataTable
+            $('#measuresTable').DataTable({
+                columns: [null, null, { orderable: false }],
+                order: [[0, 'asc']],
+                pageLength: 10,
+                searching: true,
+                language: {
+                    emptyTable: 'None found'
+                }
+            });
+        });
+    </script>
+}
