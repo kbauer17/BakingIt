@@ -25,7 +25,8 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group col-sm-6">
                     <label asp-for="IngredientId" class="form-label"></label>
-                        <select asp-for="IngredientId" asp-items="ViewBag.PantryIngredients" class="form-control" required>
+                    <i class="fas fa-question-circle ms-1" data-bs-toggle="tooltip" title="Please do select a Pantry Ingredient unless this is a generic conversion which is always true, like 1 pound = 16 ounces"></i>
+                        <select asp-for="IngredientId" asp-items="ViewBag.PantryIngredients" class="form-control">
                             <option value="">--Select--</option></select>
                         <span asp-validation-for="IngredientId" class="text-danger"></span>
                 </div>
@@ -47,6 +48,7 @@
                 <div class="col-lg-4 col-md-6 col-sm-12">
                     <div class="form-group">
                         <label asp-for="FromMeasureId" class="form-label"></label>
+                        <i class="fas fa-question-circle ms-1" data-bs-toggle="tooltip" title="The measure of the purchased item, like pounds of flour"></i>
                         <select asp-for="FromMeasureId" asp-items="ViewBag.Measures" class="form-control" required>
                             <option value="">--Select--</option></select>
                         <span asp-validation-for="FromMeasureId" class="text-danger"></span>
@@ -55,6 +57,7 @@
                 <div class="col-lg-4 col-md-6 col-sm-12">
                     <div class="form-group">
                         <label asp-for="ToMeasureId" class="form-label"></label>
+                        <i class="fas fa-question-circle ms-1" data-bs-toggle="tooltip" title="The measure used in the recipe, like a cup of flour"></i>
                         <select asp-for="ToMeasureId" asp-items="ViewBag.Measures" class="form-control" required>
                             <option value="">--Select--</option></select>
                         <span asp-validation-for="ToMeasureId" class="text-danger"></span>
@@ -63,6 +66,7 @@
                 <div class="col-lg-4 col-md-6 col-sm-12">
                     <div class="form-group">
                         <label asp-for="ConversionFactor" class="form-label"></label>
+                        <i class="fas fa-question-circle ms-1" data-bs-toggle="tooltip" title="The conversion from the purchased measure to the recipe measure, for example 1 pound of flour = 3.63 cups of flour"></i>
                         <input type="number" step="0.01" min="0" asp-for="ConversionFactor" class="form-control" required placeholder="Example:  3.63"/>
                         <span asp-validation-for="ConversionFactor" class="text-danger"></span>
                     </div>

@@ -15,12 +15,15 @@ namespace BakingIt.Models
         public string ConversionName { get; set; } = null!;
         public string? Notes { get; set; }
 
+        [Required(ErrorMessage = "Please enter the Initial Measure")]
         [Display(Name = "Initial Measure")]
         public int FromMeasureId { get; set; }
 
+        [Required(ErrorMessage = "Please enter the Final Measure")]
         [Display(Name = "Final Measure")]
         public int ToMeasureId { get; set; }
 
+        [Required(ErrorMessage = "Please enter the Conversion Factor")]
         [Display(Name = "Conversion Factor")]
         public decimal ConversionFactor { get; set; }
 
