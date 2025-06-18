@@ -10,11 +10,15 @@ namespace BakingIt.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]   // Ensure auto-increment
         public int RecipeIngredientId { get; set; } // Primary Key
         public int RecipeId { get; set; } // Foreign Key linking to the Recipe table
+
+        [Required(ErrorMessage = "Please select an Ingredient")]
         public int IngredientId { get; set; } // Foreign Key linking to the Ingredient table
 
+        [Required(ErrorMessage = "Please enter the Quantity")]
         [Display(Name = "Quantity used in Recipe")]
         public decimal Quantity { get; set; } // Quantity needed in the recipe's unit
 
+        [Required(ErrorMessage = "Please select the measure")]
         [Display(Name = "Measure of the Quantity")]
         public int MeasureId { get; set; } // The measure for the quantity (e.g., cups, tablespoons, drops)
 

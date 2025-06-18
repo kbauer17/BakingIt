@@ -7,12 +7,14 @@
 
 @if (ViewBag.ModelErrors != null)
 {
-    <ul>
-        @foreach (var error in ViewBag.ModelErrors)
-        {
-            <li>@error</li>
-        }
-    </ul>
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewBag.ModelErrors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
 }
 
 <div class="row">
@@ -22,7 +24,7 @@
             <div class="row">
                 <div class="form-group col-sm-6">
                     <label asp-for="Recipe.RecipeName" class="form-label"></label>
-                    <input asp-for="Recipe.RecipeName" class="form-control" />
+                    <input asp-for="Recipe.RecipeName" class="form-control" required/>
                     <span asp-validation-for="Recipe.RecipeName" class="text-danger"></span>
                 </div>
             </div>

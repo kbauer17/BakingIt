@@ -18,18 +18,18 @@
         }
         else
         {
-            <select asp-for="IngredientId" class="form-control" asp-items="ViewBag.PantryIngredients">
+            <select asp-for="IngredientId" class="form-control" asp-items="ViewBag.PantryIngredients" required>
                 <option value="">-- Select Ingredient --</option>
             </select>
         }
         <span asp-validation-for="IngredientId" class="text-danger"></span>
     </td>
     <td>
-        <input asp-for="Quantity" class="form-control" />
+        <input type="number" step="0.01" min="0.00"  asp-for="Quantity" class="form-control" required />
         <span asp-validation-for="Quantity" class="text-danger"></span>
     </td>
     <td>
-        <select asp-for="MeasureId" class="form-control" asp-items="ViewBag.Measures">
+        <select asp-for="MeasureId" class="form-control" asp-items="ViewBag.Measures" required>
             <option value="">-- Select Measure --</option>
         </select>
         <span asp-validation-for="MeasureId" class="text-danger"></span>

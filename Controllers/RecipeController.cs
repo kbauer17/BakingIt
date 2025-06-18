@@ -55,7 +55,10 @@ public class RecipeController : Controller
     /// <returns></returns>
     public async Task<IActionResult> CreateRecipe()
     {
-        var model = new RecipeViewModel();
+        var model = new RecipeViewModel
+        {
+            Recipe = new Recipe(string.Empty)
+        };
 
         // Populate the dropdown lists for the initial page load.
         ViewBag.PantryIngredients = await _pantryIngredientService.GetPantryIngredientsSelectListAsync();
