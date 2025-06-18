@@ -43,7 +43,7 @@
                 <td>
                     <a class="btn btn-accent" asp-controller="Recipe" asp-action="RecipeDetails" asp-route-id="@recipe.RecipeId">View Recipe Details</a>
 
-                    <a class="btn btn-outline-danger" asp-controller="Recipe" asp-action="DeleteRecipe" asp-route-id="@recipe.RecipeId">
+                    <a class="btn btn-outline-danger" asp-controller="Recipe" asp-action="DeleteRecipe" asp-route-id="@recipe.RecipeId" onclick="return confirm('Are you sure you want to delete this Recipe?');">
                         <i class="fas fa-trash-alt me-2"></i>Delete Recipe</a>
                 </td>
             </tr>
