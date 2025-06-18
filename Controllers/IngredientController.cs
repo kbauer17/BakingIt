@@ -19,21 +19,6 @@ public class IngredientController : Controller
         _measureRepository = measureRepository;
     }
 
-    // GET: Display all conversions and ingredients
-    public async Task<IActionResult> Index()
-    {
-        var conversions = await _conversionRepository.GetAllAsync();
-        var ingredients = await _ingredientRepository.GetAllAsync();
-
-        var viewModel = new ConversionIngredientViewModel
-        {
-            Conversions = conversions.ToList(),
-            Ingredients = ingredients.ToList()
-        };
-
-        return View(viewModel);
-    }
-
     #region Ingredient
     public async Task<IActionResult> ViewIngredients()
     {
@@ -123,14 +108,6 @@ public class IngredientController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditIngredient(Ingredient ingredient)
     {
-        // check for duplicate IngredientName
-        if (await IngredientExistsAsync(ingredient.IngredientName))
-        {
-            ModelState.AddModelError("IngredientName", "This ingredient already exists.");
-            ViewBag.Measures = await GetMeasuresSelectListAsync();
-            return View(ingredient);
-        }
-
         // Lookup Measure from database using MeasureId
         var measure = await _measureRepository.GetByIdAsync(ingredient.MeasureId);
 
@@ -164,6 +141,11 @@ public class IngredientController : Controller
         }
     }
 
+    /// <summary>
+    ///     Delete an existing Ingredient - Setter
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<IActionResult> DeleteIngredient(int id)
     {
         var ingredient = await _ingredientRepository.GetByIdAsync(id);
@@ -185,21 +167,6 @@ public class IngredientController : Controller
     }
     #endregion  // end of Ingredient section
 
-    #region Conversion
-    //  adding a Conversion
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddConversion(Conversion conversion)
-    {
-        if (ModelState.IsValid)
-        {
-            await _conversionRepository.AddAsync(conversion);
-            return RedirectToAction(nameof(Index));
-        }
-        return View(conversion);
-    }
-    #endregion  // end of Conversion section
-
     #region Private Methods
     private async Task<SelectList> GetMeasuresSelectListAsync()
     {
@@ -211,6 +178,11 @@ public class IngredientController : Controller
         return new SelectList(sortedMeasures, "MeasureId", "MeasureName");
     }
     
+    /// <summary>
+    ///     Check for existing Ingredient Name - called by CreateIngredient
+    /// </summary>
+    /// <param name="ingredientName"></param>
+    /// <returns></returns>
     private async Task<bool> IngredientExistsAsync(string ingredientName)
     {
         // Normalize the name for comparison (remove spaces & make lowercase)
