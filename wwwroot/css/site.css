@@ -100,3 +100,46 @@ input.input-validation-error::placeholder {
 input:not(.input-validation-error)::placeholder {
     color: inherit; /* Resets to default for correct entry*/
 }
+
+/* NAV BAR:  set the color scheme and font size */
+.navbar-custom {
+  background-color: #2C3E50; /* Navy Blue */
+  color: #F5F5DC; /* Cream */
+}
+/* Make sure links inherit the nav bar’s text color */
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+  color: #F5F5DC;
+}
+.navbar-custom .nav-link:hover {
+  /* Optionally, a hover state */
+  color: #F5F5DC;
+  opacity: 0.8;
+}
+
+.navbar-custom .navbar-brand {
+  font-size: 2rem; /* Larger than normal */
+  font-weight: bold;
+}
+.navbar-custom .nav-link {
+  font-size: 1.25rem; /* Increase link text size */
+}
+
+/* CARDS:  custom styling and a hover response */
+  /* Make sure the whole card feels clickable */
+a.card {
+  text-decoration: none;       /* remove underline */
+  cursor: pointer;             /* show pointer on hover */
+  transition: 
+    transform .2s ease,        /* smooth lift */
+    box-shadow .2s ease,       /* smooth shadow */
+    background-color .2s ease; /* smooth bg change */
+}
+
+  /* Hover/focus state */
+a.card:hover,
+a.card:focus {
+  transform: translateY(-4px);             /* slight lift */
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);  /* heavier shadow */
+  background-color: #f8f9fa;               /* lighten background */
+}
