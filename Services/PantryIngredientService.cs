@@ -15,11 +15,13 @@ namespace BakingIt.Services
         public async Task<IEnumerable<SelectListItem>> GetPantryIngredientsSelectListAsync()
         {
             var ingredients = await _ingredientRepository.GetAllAsync();
-            return ingredients.Select(i => new SelectListItem
-            {
-                Value = i.IngredientId.ToString(),
-                Text = i.IngredientName
-            });
+            return ingredients
+                .OrderBy(i => i.IngredientName)
+                .Select(i => new SelectListItem
+                {
+                    Value = i.IngredientId.ToString(),
+                    Text = i.IngredientName
+                });
         }
     }
 }

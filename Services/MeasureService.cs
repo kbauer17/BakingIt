@@ -15,11 +15,13 @@ namespace BakingIt.Services
         public async Task<IEnumerable<SelectListItem>> GetMeasuresSelectListAsync()
         {
             var measures = await _measureRepository.GetAllAsync();
-            return measures.Select(m => new SelectListItem
-            {
-                Value = m.MeasureId.ToString(),
-                Text = m.MeasureName
-            });
+            return measures
+                .OrderBy(m => m.MeasureName)
+                .Select(m => new SelectListItem
+                {
+                    Value = m.MeasureId.ToString(),
+                    Text = m.MeasureName
+                });
         }
     }
 }
