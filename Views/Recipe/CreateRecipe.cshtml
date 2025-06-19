@@ -101,7 +101,7 @@
                     }
                     
                     // Append the new row markup to the DataTable.
-                    var newRow = table.row.add($newRowElement).draw().node();
+                    var newRow = table.row.add($newRowElement).draw(false).node();
                     rowIndex++;
 
                     // Scroll to a new row within the table's scrolling container only.
@@ -118,7 +118,7 @@
             // Delegate event listener for removing an ingredient row
             $('#RecipeIngredientsTable').on("click", ".removeIngredientRow", function () {
                 var row = $(this).closest("tr");
-                table.row(row).remove().draw();
+                table.row(row).remove().draw(false);
             });
         });
     </script>
