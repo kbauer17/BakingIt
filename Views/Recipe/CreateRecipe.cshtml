@@ -83,7 +83,9 @@
             var table = $('#RecipeIngredientsTable').DataTable({
                 paging: false,
                 ordering: false,
-                searching: false
+                searching: false,
+                scrollY: '200px',   // Sets table body height with vertical scrolling
+                scrollCollapse: true    // Allows the table to collapse if fewer than the expected rows exist
             });
             var rowIndex = table.rows().count();
 
@@ -91,9 +93,25 @@
                 e.preventDefault();
                 
                 $.get("/Recipe/GetRecipeIngredientPartial", { indexRI: rowIndex }, function (data) {
+                    // Convert the return data to a jQuery object and filter only <tr> elements
+                    var $newRowElement = $(data).filter("tr");
+
+                    if(!$newRowElement.length){
+                        console.error("Partial view did not return a valid <tr> element");
+                    }
+                    
                     // Append the new row markup to the DataTable.
-                    table.row.add($(data)).draw();
+                    var newRow = table.row.add($newRowElement).draw().node();
                     rowIndex++;
+
+                    // Scroll to a new row within the table's scrolling container only.
+                    var $scrollBody = $('#RecipeIngredientsTable_wrapper .dataTables_scrollBody');
+
+                    // Calculate the position of the new row relative to the scroll container.
+                    var newRowPosition = $(newRow).position().top;
+                    $scrollBody.animate({
+                        scrollTop: newRowPosition - 20  // adjust offset for UI elements like header
+                    }, 500);    // scroll animation duration in milliseconds
                 });
             });
 
