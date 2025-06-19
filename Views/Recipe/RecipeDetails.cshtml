@@ -30,8 +30,8 @@
                 <dl class="row ms-2">
                     @foreach (var ingredient in Model.RecipeIngredients)
                     {
-                        <dt class="col-sm-2">@ingredient.Ingredient.IngredientName</dt>
-                        <dd class="col-sm-10">@ingredient.Quantity @ingredient.Measure.MeasureAbbreviation</dd>
+                        <dt class="col-sm-3">@ingredient.Ingredient.IngredientName</dt>
+                        <dd class="col-sm-9">@ingredient.Quantity @ingredient.Measure.MeasureAbbreviation</dd>
                     }
                 </dl>
             </div>

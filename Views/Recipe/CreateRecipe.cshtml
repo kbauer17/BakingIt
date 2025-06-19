@@ -80,7 +80,11 @@
     <script>
         $(document).ready(function () {
             // Initialize the DataTable on the ingredients table.
-            var table = $('#RecipeIngredientsTable').DataTable();
+            var table = $('#RecipeIngredientsTable').DataTable({
+                paging: false,
+                ordering: false,
+                searching: false
+            });
             var rowIndex = table.rows().count();
 
             $("#addRecipeIngredientButton").on("click", function (e) {

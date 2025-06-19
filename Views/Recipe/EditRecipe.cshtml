@@ -75,14 +75,15 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <!-- Ensure DataTables JS and CSS are referenced in your layout or here -->
+
     <script>
         $(document).ready(function () {
             // Initialize the DataTable on the RecipeIngredients table.
             var table = $('#RecipeIngredientsTable').DataTable({
                 paging: false,
-                ordering: false,
-                searching: false
+                columnDefs: [
+                    { targets: [1,2,3], orderable: false}    
+                ]
             });
 
             // Determine the starting row index based on current table rows.

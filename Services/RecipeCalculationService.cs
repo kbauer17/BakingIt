@@ -33,6 +33,11 @@ namespace BakingIt.Services
 
             decimal totalCost = 0;
 
+                Console.WriteLine("\n");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine($"{recipe.RecipeName} Ingredients: ");
+                Console.ResetColor();
+
             foreach (var recipeIngredient in recipe.RecipeIngredients)
             {
                 var ingredient = recipeIngredient.Ingredient;
@@ -59,7 +64,13 @@ namespace BakingIt.Services
 
                 decimal ingredientCost = recipeIngredient.Quantity * costPerRecipeUnit;
                 totalCost += ingredientCost;
+
+                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.WriteLine($"{ingredient.IngredientName}: {ingredientCost:C}");
+                    Console.ResetColor();
             }
+
+                Console.WriteLine("\n");
             return totalCost;
         }
     }
