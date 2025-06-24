@@ -1,7 +1,8 @@
 using BakingIt.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-public class BakingItContext : DbContext
+public class BakingItContext : IdentityDbContext<ApplicationUser>
 {
     public BakingItContext(DbContextOptions<BakingItContext> options)
         : base(options){}
@@ -16,6 +17,9 @@ public class BakingItContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Define Identity's tables
+        base.OnModelCreating(modelBuilder);
+
         // Define primary keys
         modelBuilder.Entity<Ingredient>().HasKey(i => i.IngredientId);
         modelBuilder.Entity<Recipe>().HasKey(r => r.RecipeId);
