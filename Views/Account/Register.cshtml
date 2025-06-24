@@ -1,0 +1,41 @@
+@model BakingIt.ViewModels.Account.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-4 text-center">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            @if(TempData["Message"] != null)
+            {
+                <div class="alert alert-success">@TempData["Message"]</div>
+            }
+            @if(TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
+            <form asp-action="Register" method="post">
+                @Html.AntiForgeryToken()
+            <div asp-validation-summary="All"></div>
+            <div class="form-group mb-3">
+                <input asp-for="Email" placeholder="Email" class="form-control" />
+            </div>
+            <div class="form-group mb-3">
+                <input asp-for="Password" placeholder="Password" type="password" class="form-control"/>
+            </div>
+            <div class="form-group mb-3">
+                <input asp-for="ConfirmPassword" placeholder="Confirm password" type="password" class="form-control"/>
+            </div>
+            <div class="form-group text-center mb-4">
+                <button type="submit" class="btn btn-submit">Register</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>

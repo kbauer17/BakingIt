@@ -20,13 +20,14 @@ builder.Services.AddDbContext<BakingItContext>(options =>
 
 // Add services to the container.
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-{
-    // tweak password/lockout settings here, e.g.:
-    options.Password.RequiredLength = 8;
-    options.Lockout.MaxFailedAccessAttempts = 5;
-})
-.AddEntityFrameworkStores<BakingItContext>()
-.AddDefaultTokenProviders(); 
+    {
+        // tweak password/lockout settings here, e.g.:
+        options.Password.RequiredLength = 8;
+        options.Password.RequireDigit = true;
+        options.Lockout.MaxFailedAccessAttempts = 5;
+    })
+    .AddEntityFrameworkStores<BakingItContext>()
+    .AddDefaultTokenProviders(); 
 
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); // requires dotnet add package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation --version 8.0.4
 builder.Services.AddScoped(typeof(IBakingItRepository<>), typeof(EBakingItRepository<>));
@@ -40,6 +41,16 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 };
+
+// If in Development and Seeder is set to true, Seed an admin and basic roles
+if (app.Environment.IsDevelopment()
+    && builder.Configuration.GetValue<bool>("SeedAdmin:Enabled"))
+{
+    using var scope = app.Services.CreateScope();
+    var cfg = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    await IdentitySeeder.SeedAsync(scope.ServiceProvider, cfg);
+}
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -59,8 +70,25 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+// app.MapControllerRoute(
+//     name: "default",
+//     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.UseEndpoints(endpoints =>
+    {
+        // Map explicit route for login for all users (authenticated or not)
+        // This allows the Login getter method to apply logic depending upon authentication state of the User
+        endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Account}/{action=Login}/{id?}"
+        ).AllowAnonymous(); // Allow unauthenticated access to the Login action
+
+        // Apply global authorization policy to all other routes
+        // endpoints.MapControllerRoute(
+        //     name: "authenticatedDefault",
+        //     pattern: "{controller=Home}/{action=Index}/{id?}"
+        // ).RequireAuthorization(_RequireAuthenticatedUserPolicy);
+        
+    });
 
 app.Run();
