@@ -27,9 +27,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         options.Lockout.MaxFailedAccessAttempts = 5;
     })
     .AddEntityFrameworkStores<BakingItContext>()
-    .AddDefaultTokenProviders(); 
+    .AddDefaultTokenProviders();
 
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); // requires dotnet add package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation --version 8.0.4
+builder.Services.AddControllersWithViews(options =>
+    options.Filters.Add<BakingIt.Filters.AutoPopulateModelErrorsAttribute>())
+    .AddRazorRuntimeCompilation(); // requires dotnet add package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation --version 8.0.4
 builder.Services.AddScoped(typeof(IBakingItRepository<>), typeof(EBakingItRepository<>));
 builder.Services.AddScoped<IMeasureService, MeasureService>();
 builder.Services.AddScoped<IPantryIngredientService, PantryIngredientService>();

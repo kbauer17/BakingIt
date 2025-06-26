@@ -13,7 +13,14 @@ namespace BakingIt.Models
             foreach (var roleName in new[] { "Admin", "Guest", "Baker" })
             {
                 if (!await roleMgr.RoleExistsAsync(roleName))
-                    await roleMgr.CreateAsync(new IdentityRole(roleName));
+                {
+                    var role = new IdentityRole(roleName)
+                    {
+                        ConcurrencyStamp = Guid.NewGuid().ToString()
+                    };
+                    await roleMgr.CreateAsync(role);
+                }
+            
             }
 
             // 2. Seed Default Admin

@@ -1,0 +1,11 @@
+@if(ViewBag.ModelErrors != null)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach(var error in ViewBag.ModelErrors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}

@@ -1,0 +1,33 @@
+@model BakingIt.ViewModels.UserManagementViewModel
+@{
+    ViewData["Title"] = "Create Role";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<partial name="_ModelErrorsPartial"/>
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-row">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group col-sm-6">
+                    <label asp-for="IdentityRole.Name" class="form-label">Role Name</label>
+                    <input asp-for="IdentityRole.Name" class="form-control" maxlength="256" placeholder="Example: Line Chef" required />
+                    <span asp-validation-for="IdentityRole.Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+                <a asp-controller="UserManagement" asp-action="ViewRoles" class="btn btn-return-outline mb-3">Cancel and Return to Roles List</a>
+                <input type="submit" value="Create" class="btn btn-submit mb-3" />
+                
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

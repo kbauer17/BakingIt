@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Index - User Management";
+}
+
+<div class="row my-3">
+    <h3>
+        <a class="btn btn-accent" asp-controller="Home" asp-action="Index"><i class="fa fa-arrow-left"></i></a>
+        User Management Data Entry
+    </h3>
+</div>
+
+<div class="container">
+    <div class="row justify-content-between">
+        <a asp-action="ViewRoles" asp-controller="UserManagement" class="card w-25 text-center text-decoration-none">
+            <div class="card-body">
+                <h5 class="card-title">Roles</h5>
+                <p class="card-text">Click here to do something</p>
+            </div>
+        </a>
+
+        <a asp-action="ViewPermissions" asp-controller="UserManagement" class="card w-25 text-center text-decoration-none">
+            <div class="card-body">
+                <h5 class="card-title">Permissions</h5>
+                <p class="card-text">Click here to do something</p>
+            </div>
+        </a>
+
+        <a asp-action="ViewUsers" asp-controller="UserManagement" class="card w-25 text-center text-decoration-none">
+            <div class="card-body">
+                <h5 class="card-title">User Management</h5>
+                <p class="card-text">Click here to do something</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<style>
+    p {
+        color: #2C3E50;
+    }
+</style>
